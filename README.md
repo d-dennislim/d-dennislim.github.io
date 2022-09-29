@@ -13,17 +13,6 @@ Credits:
 ---
 Massively by HTML5 UP[^1]  
 AJ [^2]  
-```
-Demo Images:  
-Unsplash (unsplash.com) 
 
-Icons:  
-Font Awesome (fontawesome.io)  
-
-Other:  
-jQuery (jquery.com)  
-Scrollex (github.com/ajlkn/jquery.scrollex)  
-Responsive Tools (github.com/ajlkn/responsive-tools)  
-```
 [^1]: html5up.net | @ajlkn
 [^2]: aj@lkn.io | @ajlkn
