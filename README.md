@@ -13,8 +13,7 @@ Click [here](https://d-dennislim.github.io/ "Data Portfolio by Dennis") to visit
 
 Credits:
 ---
-Massively by HTML5 UP[^1]  
-AJ [^2]  
+Massively by HTML5 UP, AJ [^1]  
 
-[^1]: html5up.net | @ajlkn
-[^2]: aj@lkn.io | @ajlkn
+[^1]: html5up.net | aj@lkn.io | @ajlkn
+
