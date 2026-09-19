@@ -1,0 +1,136 @@
+---
+/**
+ * The one-page portfolio, assembled from
+ * design-system/components/PortfolioPage/preview.html.
+ *
+ * Section order is fixed by doc/brand-system.md §21: About → Experience →
+ * Certifications → Projects → Contact. Experience sits before Certifications
+ * deliberately — the certifications are remarkable, but experience is what is
+ * being bought.
+ *
+ * Every string rendered here comes from src/content/profile.json. Nothing is
+ * hard-coded except the structural labels the design system itself fixes.
+ */
+import Base from '../layouts/Base.astro';
+import NavBar from '../components/NavBar.astro';
+import Hero from '../components/Hero.astro';
+import ExperienceItem from '../components/ExperienceItem.astro';
+import Certifications from '../components/Certifications.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import Footer from '../components/Footer.astro';
+import { profile } from '../content/profile';
+
+/* The five sections, in IA order. The `NN / 05` index shown beside a section
+   heading is derived from this list, never authored. */
+const sections = [
+  { id: 'about', label: 'About' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'certifications', label: 'Certifications' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'contact', label: 'Contact' },
+];
+
+const navLinks = sections.map((section) => ({
+  label: section.label,
+  href: `#${section.id}`,
+}));
+
+const pad = (n: number): string => String(n).padStart(2, '0');
+const indexOf = (id: string): string =>
+  `${pad(sections.findIndex((section) => section.id === id) + 1)} / ${pad(sections.length)}`;
+
+const featured = profile.projects.filter((project) => project.featured);
+if (featured.length > 1) {
+  throw new Error(
+    `index: ${featured.length} featured projects. Exactly one may be featured — more than one and nothing reads as "the" featured project.`,
+  );
+}
+---
+
+<Base title={profile.site.title}>
+  <a class="skip-link body-sm" href="#main">Skip to content</a>
+
+  <NavBar
+    promptMark={profile.identity.promptMark}
+    links={navLinks}
+    currentHref="#about"
+  />
+
+  <main id="main">
+    <section class="section" id="about">
+      <div class="section-inner">
+        <Hero
+          eyebrow="About"
+          name={profile.identity.name}
+          initials={profile.identity.initials}
+          role={profile.identity.role}
+          bio={profile.identity.bio}
+          status={profile.identity.status}
+          links={profile.hero.links}
+          metrics={profile.hero.metrics}
+        />
+      </div>
+    </section>
+
+    <section class="section" id="experience">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <p class="label section-eyebrow">Experience</p>
+            <h2 class="h1 section-title">{profile.sections.experienceTitle}</h2>
+          </div>
+          <span class="label section-index">{indexOf('experience')}</span>
+        </div>
+        <ul class="exp-list">
+          {profile.experience.map((role) => <ExperienceItem {...role} headingLevel={3} />)}
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section-band" id="certifications">
+      <div class="section-inner">
+        <Certifications
+          eyebrow="Certifications"
+          title={profile.sections.certificationsTitle}
+          items={profile.certifications.items}
+          jacket={profile.certifications.jacket}
+        />
+      </div>
+    </section>
+
+    <section class="section" id="projects">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <p class="label section-eyebrow">Projects</p>
+            <h2 class="h1 section-title">{profile.sections.projectsTitle}</h2>
+          </div>
+          <span class="label section-index">{indexOf('projects')}</span>
+        </div>
+        <div class="project-grid">
+          {profile.projects.map((project) => <ProjectCard {...project} headingLevel={3} />)}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="section-inner">
+        <ContactBlock
+          eyebrow="Contact"
+          heading={profile.contact.heading}
+          lead={profile.contact.lead}
+          emailLabel={profile.contact.emailLabel}
+          emailHref={profile.contact.emailHref}
+          actions={profile.contact.actions}
+        />
+      </div>
+    </section>
+  </main>
+
+  <Footer
+    copyline={profile.footer.copyline}
+    joke={profile.footer.joke}
+    links={profile.footer.links}
+  />
+</Base>

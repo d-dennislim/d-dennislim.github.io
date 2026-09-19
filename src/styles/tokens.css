@@ -1,0 +1,214 @@
+/* GENERATED FILE — DO NOT EDIT.
+   Compiled from design-system/tokens.json by scripts/build-tokens.mjs.
+   Run `npm run build` (or `node scripts/build-tokens.mjs`) to regenerate.
+   Source: Cloud Portfolio System v2 */
+
+:root {
+  color-scheme: light;
+
+  /* Colour + shadow — light theme */
+  --surface: #FAF9F7;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: #F0EEE9;
+  --ink: #1D2433;
+  --ink-muted: #5B6472;
+  --border: #E3E1DC;
+  --border-strong: #8F897F;
+  --brand: #2E5AAC;
+  --brand-hover: #23477F;
+  --on-brand: #FFFFFF;
+  --accent: #0B6E5C;
+  --accent-aws: #9A5600;
+  --success: #146E43;
+  --warning: #8A5A10;
+  --danger: #C42233;
+  --info: #1F5F8B;
+  --diagram-canvas: #FFFFFF;
+  --diagram-boundary: #6B7383;
+  --diagram-zone-public: #E8F1FA;
+  --diagram-zone-private: #F2EDE3;
+  --diagram-node: #2E5AAC;
+  --diagram-node-alt: #0B6E5C;
+  --diagram-node-aws: #9A5600;
+  --diagram-flow: #3A4252;
+  --diagram-flow-alt: #78808F;
+  --diagram-annotation: #C42233;
+  --shadow-sm: 0 1px 2px rgba(29,36,51,0.06), 0 2px 6px rgba(29,36,51,0.05);
+  --shadow-md: 0 4px 16px rgba(29,36,51,0.10);
+
+  /* Type families */
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, 'Cascadia Code', monospace;
+
+  /* Spacing, radius, opacity, z-index, layout */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 20px;
+  --opacity-disabled: 0.45;
+  --opacity-muted: 0.7;
+  --z-base: 0;
+  --z-sticky: 100;
+  --z-overlay: 500;
+  --container: 960px;
+  --container-narrow: 720px;
+  --measure-prose: 680px;
+}
+
+/* Default: follow the OS. An explicit light choice on <html> still wins. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface: #10151F;
+    --surface-raised: #19202D;
+    --surface-sunken: #0A0E16;
+    --ink: #E9ECF2;
+    --ink-muted: #A0A9BA;
+    --border: #2A3242;
+    --border-strong: #667186;
+    --brand: #6E9BE8;
+    --brand-hover: #8DB2F0;
+    --on-brand: #0E1726;
+    --accent: #3FB99E;
+    --accent-aws: #FF9900;
+    --success: #46C77E;
+    --warning: #E9A23B;
+    --danger: #F2707F;
+    --info: #62B0DE;
+    --diagram-canvas: #19202D;
+    --diagram-boundary: #8C95A6;
+    --diagram-zone-public: #1B2C40;
+    --diagram-zone-private: #2E2A22;
+    --diagram-node: #6E9BE8;
+    --diagram-node-alt: #3FB99E;
+    --diagram-node-aws: #FF9900;
+    --diagram-flow: #C3CAD6;
+    --diagram-flow-alt: #7C8698;
+    --diagram-annotation: #F2707F;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.35);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+  }
+}
+
+/* Manual override from the theme toggle. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #10151F;
+  --surface-raised: #19202D;
+  --surface-sunken: #0A0E16;
+  --ink: #E9ECF2;
+  --ink-muted: #A0A9BA;
+  --border: #2A3242;
+  --border-strong: #667186;
+  --brand: #6E9BE8;
+  --brand-hover: #8DB2F0;
+  --on-brand: #0E1726;
+  --accent: #3FB99E;
+  --accent-aws: #FF9900;
+  --success: #46C77E;
+  --warning: #E9A23B;
+  --danger: #F2707F;
+  --info: #62B0DE;
+  --diagram-canvas: #19202D;
+  --diagram-boundary: #8C95A6;
+  --diagram-zone-public: #1B2C40;
+  --diagram-zone-private: #2E2A22;
+  --diagram-node: #6E9BE8;
+  --diagram-node-alt: #3FB99E;
+  --diagram-node-aws: #FF9900;
+  --diagram-flow: #C3CAD6;
+  --diagram-flow-alt: #7C8698;
+  --diagram-annotation: #F2707F;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.35);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+/* ---- Type styles: one class per style in tokens.json ---- */
+
+.display {
+  font-family: var(--font-sans);
+  font-size: 56px;
+  line-height: 58px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.h1 {
+  font-family: var(--font-sans);
+  font-size: 32px;
+  line-height: 38px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.h2 {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 600;
+}
+
+.h3 {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.body-lg {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 30px;
+  font-weight: 400;
+}
+
+.body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 26px;
+  font-weight: 400;
+}
+
+.body-sm {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+}
+
+.quote {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.metric {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  line-height: 32px;
+  font-weight: 600;
+}

@@ -1,0 +1,668 @@
+/* Cloud Portfolio System — component stylesheet.
+   HTML + CSS patterns, no JS runtime. Every value below comes from a token
+   in tokens.json, with two deliberate exceptions, both marked inline:
+   the 44px touch-target floor and the motion scale (tokens.json has no
+   motion family, so durations and easings are declared here). */
+
+/* ---- Motion scale (not expressible in tokens.json) ---- */
+:root {
+  --duration-fast: 120ms;   /* colour and border changes */
+  --duration-base: 200ms;   /* transform and shadow changes */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+* { box-sizing: border-box; }
+
+.ds-canvas {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+/* ---- Focus: one ring, everywhere, never removed ---- */
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-4);
+  top: calc(-1 * var(--space-16));
+  z-index: var(--z-overlay);
+  background: var(--surface-raised);
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  text-decoration: none;
+  transition: top var(--duration-fast) var(--ease-standard);
+}
+.skip-link:focus { top: var(--space-4); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Layout shells ---- */
+
+.section { padding: var(--space-16) var(--space-8); }
+@media (max-width: 720px) {
+  .section { padding: var(--space-12) var(--space-4); }
+}
+.section-band { background: var(--surface-sunken); }
+
+.section-inner { max-width: var(--container); margin: 0 auto; }
+.section-inner-narrow { max-width: var(--container-narrow); margin: 0 auto; }
+.prose { max-width: var(--measure-prose); }
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.section-eyebrow {
+  color: var(--accent);
+  text-transform: uppercase;
+  display: block;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.section-title { margin: 0; }
+.section-index { font-family: var(--font-mono); color: var(--ink-muted); }
+
+/* ---- Nav ---- */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-8);
+  background: var(--surface-raised);
+  border-bottom: 2px solid var(--brand);
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-mark {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.navbar-mark .prompt-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background: var(--brand);
+}
+
+.navbar-links {
+  display: flex;
+  gap: var(--space-6);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.navbar-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* WCAG 2.5.5 target size — an accessibility floor, not a style choice */
+  text-decoration: none;
+  color: var(--ink-muted);
+  font-size: 14px;
+  border-bottom: 2px solid transparent;
+  transition: color var(--duration-fast) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard);
+}
+.navbar-links a:hover { color: var(--ink); border-bottom-color: var(--border-strong); }
+.navbar-links a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--brand); }
+
+/* ---- Hero ---- */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: var(--space-8);
+  align-items: stretch;
+}
+@media (max-width: 780px) { .hero { grid-template-columns: 1fr; } }
+
+.hero-main { display: flex; flex-direction: column; justify-content: center; }
+.hero-name { margin: 0 0 var(--space-1) 0; }
+.hero-role { color: var(--accent); margin: 0 0 var(--space-4) 0; }
+.hero-bio { color: var(--ink); max-width: 56ch; margin: 0 0 var(--space-6) 0; }
+.hero-links { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+
+.console-panel {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.console-head { display: flex; align-items: center; justify-content: space-between; }
+.console-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--brand);
+  color: var(--on-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* ---- Metrics: reusable outside the hero ---- */
+
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-4);
+  margin: 0;
+}
+/* NB: the tile class is .metric-tile, not .metric — `metric` is a type style
+   name in tokens.json and compiles to its own .metric class. */
+.metric-tile {
+  text-align: center;
+  padding: 0 var(--space-2);
+  border-right: 1px solid var(--border);
+}
+.metric-tile:last-child { border-right: none; }
+.metric-value {
+  font-family: var(--font-mono);
+  color: var(--ink);
+  display: block;
+  margin: 0;
+}
+.metric-label { color: var(--ink-muted); display: block; margin: var(--space-1) 0 0 0; }
+.metric-note { color: var(--ink-muted); display: block; margin: var(--space-1) 0 0 0; }
+
+/* ---- Buttons: every state defined ---- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px; /* WCAG 2.5.5 target size */
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard),
+              color var(--duration-fast) var(--ease-standard);
+}
+
+.btn-primary { background: var(--brand); color: var(--on-brand); }
+.btn-primary:hover { background: var(--brand-hover); }
+.btn-primary:active { background: var(--brand-hover); transform: translateY(1px); }
+
+.btn-secondary { background: transparent; color: var(--ink); border-color: var(--border-strong); }
+.btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
+.btn-secondary:active { color: var(--brand-hover); border-color: var(--brand-hover); transform: translateY(1px); }
+
+.btn[aria-disabled="true"], .btn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn[aria-busy="true"] { color: transparent; position: relative; pointer-events: none; }
+.btn[aria-busy="true"]::after {
+  content: "";
+  position: absolute;
+  width: 16px; height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 700ms linear infinite;
+}
+.btn-primary[aria-busy="true"]::after { border-color: var(--on-brand); border-top-color: transparent; }
+.btn-secondary[aria-busy="true"]::after { border-color: var(--ink); border-top-color: transparent; }
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
+/* ---- Tags ---- */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: transparent;
+}
+.tag-row { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+
+/* interactive variant, only when tags actually filter something */
+button.tag { cursor: pointer; min-height: 32px; font: inherit; }
+button.tag:hover { border-color: var(--brand); color: var(--brand); }
+button.tag[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+
+/* ---- Experience rail ---- */
+
+.exp-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-left: var(--space-8);
+  border-left: 1px solid var(--border-strong);
+  list-style: none;
+  margin: 0;
+}
+
+.exp-item { position: relative; }
+.exp-item::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--space-8) - var(--space-1));
+  top: var(--space-1);
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 0 var(--space-1) var(--surface);
+}
+
+.exp-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-1);
+}
+.exp-role { margin: 0; }
+.exp-company { color: var(--brand); font-weight: 600; }
+.exp-meta { color: var(--ink-muted); white-space: nowrap; }
+.exp-bullets { margin: var(--space-3) 0 var(--space-4) 0; padding-left: 1.1em; color: var(--ink); }
+.exp-bullets li { margin-bottom: var(--space-1); }
+
+/* ---- Projects: bento grid ---- */
+
+.project-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-6); }
+@media (max-width: 720px) { .project-grid { grid-template-columns: 1fr; } }
+
+.project-card {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transition: transform var(--duration-base) var(--ease-standard),
+              box-shadow var(--duration-base) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard);
+}
+.project-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+.project-card.is-selected { border-color: var(--brand); }
+
+.project-card.featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--space-8);
+  align-items: start;
+}
+@media (max-width: 720px) { .project-card.featured { grid-template-columns: 1fr; } }
+
+.project-eyebrow { color: var(--accent); }
+.project-title { margin: 0; }
+.project-desc { margin: 0; color: var(--ink); }
+.project-links { display: flex; gap: var(--space-4); margin-top: auto; }
+.project-links a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  color: var(--ink-muted); text-decoration: none; font-size: 14px;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.project-links a:hover { color: var(--brand); text-decoration: underline; }
+
+/* ---- Status ---- */
+
+.status { display: inline-flex; align-items: center; gap: var(--space-2); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.status-success { color: var(--success); } .status-success .status-dot { background: var(--success); }
+.status-warning { color: var(--warning); } .status-warning .status-dot { background: var(--warning); }
+.status-danger  { color: var(--danger);  } .status-danger  .status-dot { background: var(--danger);  }
+.status-info    { color: var(--info);    } .status-info    .status-dot { background: var(--info);    }
+
+/* ---- Certifications ---- */
+
+.cert-shelf {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cert-badge {
+  --hex-size: 88px;
+  width: var(--hex-size);
+  height: var(--hex-size);
+  clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0% 50%);
+  background: var(--surface-raised);
+  border: 1px solid var(--accent-aws);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--accent-aws);
+  padding: var(--space-2);
+}
+.cert-badge .cert-code { font-family: var(--font-mono); font-weight: 600; font-size: 13px; }
+
+.cert-badge-jacket {
+  --hex-size: 104px;
+  background: var(--accent-aws);
+  border-color: var(--accent-aws);
+  color: var(--on-brand);
+}
+.cert-badge-jacket .cert-code { font-size: 11px; line-height: 1.3; }
+
+.cert-jacket-block { display: flex; align-items: center; gap: var(--space-4); }
+.cert-caption { color: var(--ink-muted); max-width: 34ch; }
+
+/* ---- Testimonial ---- */
+
+.testimonial {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  margin: 0;
+}
+.testimonial-quote { margin: 0 0 var(--space-4) 0; color: var(--ink); }
+.testimonial-attrib { color: var(--ink-muted); font-style: normal; display: block; }
+
+/* ---- Article / writing list ---- */
+
+.article-list { list-style: none; margin: 0; padding: 0; }
+.article-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.article-title { margin: 0; }
+.article-title a { text-decoration: none; }
+.article-title a:hover { color: var(--brand); text-decoration: underline; }
+.article-meta { color: var(--ink-muted); white-space: nowrap; }
+
+/* ---- Diagram figure ---- */
+
+.diagram-figure {
+  margin: 0;
+  background: var(--diagram-canvas);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+}
+.diagram-figure img, .diagram-figure svg { display: block; width: 100%; height: auto; }
+.diagram-caption {
+  color: var(--ink-muted);
+  margin: var(--space-4) 0 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+/* diagram primitives, for SVGs authored inline */
+.dg-boundary { fill: none; stroke: var(--diagram-boundary); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.dg-network  { fill: none; stroke: var(--diagram-boundary); stroke-width: 1.5; }
+.dg-zone-public  { fill: var(--diagram-zone-public);  stroke: var(--diagram-boundary); stroke-width: 1; }
+.dg-zone-private { fill: var(--diagram-zone-private); stroke: var(--diagram-boundary); stroke-width: 1; stroke-dasharray: 4 3; }
+.dg-node      { fill: var(--diagram-node); }
+.dg-node-alt  { fill: var(--diagram-node-alt); }
+.dg-node-aws  { fill: var(--diagram-node-aws); }
+.dg-node-label { fill: var(--on-brand); font-family: var(--font-mono); font-size: 12px; }
+.dg-label     { fill: var(--ink); font-family: var(--font-mono); font-size: 12px; }
+.dg-flow      { stroke: var(--diagram-flow); stroke-width: 2; fill: none; }
+.dg-flow-alt  { stroke: var(--diagram-flow-alt); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+.dg-annotation { fill: var(--diagram-annotation); font-family: var(--font-mono); font-size: 12px; }
+
+/* ---- Case study ---- */
+
+.case-header { border-bottom: 1px solid var(--border); padding-bottom: var(--space-6); margin-bottom: var(--space-8); }
+.case-title { margin: 0 0 var(--space-3) 0; }
+.case-meta { display: flex; gap: var(--space-6); flex-wrap: wrap; color: var(--ink-muted); }
+.case-section { margin-bottom: var(--space-12); }
+.case-section > h2 { margin: 0 0 var(--space-4) 0; }
+.case-section > p { margin: 0 0 var(--space-4) 0; }
+.case-decisions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+.case-decision {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-6);
+}
+.case-decision h3 { margin: 0 0 var(--space-1) 0; }
+.case-decision p { margin: 0; color: var(--ink-muted); }
+
+/* ---- Contact block ---- */
+
+.contact-block {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-8);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--space-8);
+  align-items: center;
+}
+@media (max-width: 720px) { .contact-block { grid-template-columns: 1fr; } }
+.contact-heading { margin: 0 0 var(--space-2) 0; }
+.contact-lead { margin: 0; color: var(--ink-muted); max-width: 44ch; }
+.contact-actions { display: flex; flex-direction: column; gap: var(--space-3); }
+.contact-direct { color: var(--ink-muted); }
+.contact-direct a { color: var(--brand); }
+
+/* ---- Footer ---- */
+
+.footer {
+  padding: var(--space-8);
+  border-top: 1px solid var(--border);
+  color: var(--ink-muted);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.footer a { color: var(--ink-muted); text-decoration: none; }
+.footer a:hover { color: var(--brand); text-decoration: underline; }
+.footer-joke { color: var(--ink-muted); margin: var(--space-1) 0 0 0; }
+
+/* ---- Reduced motion: honour it everywhere ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .project-card:hover { transform: none; }
+  .btn:active, .btn-secondary:active { transform: none; }
+}
+
+/* ---- Print: a recruiter saving to PDF, or a section pasted into a proposal ---- */
+
+@media print {
+  .ds-canvas { background: #FFFFFF; color: #1D2433; }
+  .navbar, .skip-link, .contact-actions { display: none; }
+  .section { padding: var(--space-8) 0; }
+  .project-card, .console-panel, .testimonial, .case-decision, .contact-block, .diagram-figure {
+    box-shadow: none;
+    border: 1px solid #B4AFA6;
+    break-inside: avoid;
+  }
+  .exp-item, .project-card, .cert-badge { break-inside: avoid; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 11px; color: #5B6472; }
+  .footer-joke { display: none; }
+}
+
+/* ==========================================================================
+   SITE ADDITIONS — not part of the design system.
+
+   Everything above this line is a verbatim copy of
+   design-system/components/bundle.css. Everything below exists only because a
+   real page needs two things the preview frame didn't:
+
+   1. A document shell. The design system styles `.ds-canvas`, a wrapper the
+      preview frame supplies; here <body> carries that class, so html needs the
+      page colour behind it and body needs its default margin removed.
+   2. A theme toggle. CLAUDE.md requires one; the design system has no
+      component for it. Styled from tokens only, following §16 Iconography:
+      outlined glyph, 1.5px stroke, ink-muted at rest, brand on hover.
+
+   If either of these ever earns a place in the design system, move it there
+   and delete it here.
+   ========================================================================== */
+
+html {
+  background: var(--surface);
+}
+
+body {
+  margin: 0;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;  /* WCAG 2.5.5 target size — an accessibility floor, not a style choice */
+  min-height: 44px; /* WCAG 2.5.5 target size */
+  padding: var(--space-2);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard);
+}
+.theme-toggle:hover { color: var(--brand); border-color: var(--border-strong); }
+/* §16 sizes a standalone glyph at 24px, which is space-6 on the scale — the
+   token is used rather than a literal so the value stays in one place. */
+.theme-toggle svg { display: block; width: var(--space-6); height: var(--space-6); }
+
+/* Which glyph shows is decided here, not in JS, off the same resolved-theme
+   pair tokens.css uses — so the button is correct at first paint and with
+   JavaScript disabled. Light is the default, so the moon ("switch to dark")
+   shows unless the resolved theme is dark. */
+.theme-toggle [data-theme-icon="sun"] { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle [data-theme-icon="moon"] { display: none; }
+  :root:not([data-theme="light"]) .theme-toggle [data-theme-icon="sun"] { display: block; }
+}
+:root[data-theme="dark"] .theme-toggle [data-theme-icon="moon"] { display: none; }
+:root[data-theme="dark"] .theme-toggle [data-theme-icon="sun"] { display: block; }
+
+/* The toggle sits beside the nav links, not inside the list. */
+.navbar-end { display: flex; align-items: center; gap: var(--space-6); }
+
+@media print {
+  .theme-toggle { display: none; }
+}
+
+/* The component previews carry a handful of one-off inline styles
+   (style="margin:0 0 16px 0", style="margin-top:8px", and so on). Inline
+   pixel values can't ship — CLAUDE.md hard rule 2 — so each one is translated
+   here into the token it was already using. These add no new design values;
+   they name the ones the previews spelled out by hand.
+
+   preview.html                                    -> class below
+   .status        margin:0 0 16px 0                -> .hero-status      (space-4)
+   $ whoami span  color:var(--ink-muted)           -> .console-prompt
+   section-head   .section-eyebrow margin-bottom:4px -> scoped rule     (space-1)
+   certs          .section-title margin-bottom:32px -> .section-title-spaced (space-8)
+   featured card  .project-title margin-top:4px     -> scoped rule      (space-1)
+   featured card  .project-desc  margin-top:8px     -> scoped rule      (space-2)
+   featured card  gap:12px column                   -> .project-aside   (space-3)
+   contact        .contact-direct margin-top:16px   -> scoped rule      (space-4) */
+
+.hero-status { margin: 0 0 var(--space-4) 0; }
+
+.console-prompt { color: var(--ink-muted); }
+
+.section-head .section-eyebrow { margin-bottom: var(--space-1); }
+
+.section-title-spaced { margin-bottom: var(--space-8); }
+
+.project-card.featured .project-title { margin-top: var(--space-1); }
+.project-card.featured .project-desc { margin-top: var(--space-2); }
+
+.project-aside { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.contact-block .contact-direct { margin-top: var(--space-4); }
+
+/* Reflow fix — WCAG 2.2 AA 1.4.10, and doc/brand-system.md §14 ("test at
+   360px") and §20 ("usable at 320px effective width without horizontal
+   scrolling").
+
+   The design system's `.navbar` and `.navbar-links` are flex rows with no
+   `flex-wrap`, so with the five section links §21 specifies plus the theme
+   toggle, the bar can't fit a 360px viewport: it forces the whole document
+   wider and every section below it scrolls sideways. Allowing the bar to wrap
+   fixes it for the page as a whole, and tightening the link gap to `space-4`
+   below 720px matches the step-down `.section` padding already makes at that
+   breakpoint.
+
+   This belongs upstream in design-system/components/bundle.css. It lives here
+   because that file is a source of truth, not ours to edit. */
+
+.navbar { flex-wrap: wrap; }
+
+/* min-width:0 is the part that actually matters: a flex item won't shrink below
+   its content's min-content width by default, so without it the link list keeps
+   the bar wide and simply overflows instead of wrapping. */
+.navbar-end { flex-wrap: wrap; min-width: 0; }
+.navbar-links { flex-wrap: wrap; min-width: 0; }
+
+@media (max-width: 720px) {
+  .navbar { padding: var(--space-3) var(--space-4); }
+  .navbar-links { gap: var(--space-4); }
+}

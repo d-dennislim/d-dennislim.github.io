@@ -1,0 +1,46 @@
+---
+/**
+ * Button — design-system/components/Button
+ *
+ * Two variants only. `primary` is used once per view for the single
+ * most-wanted action; everything else is `secondary`. 44px tall by the
+ * stylesheet, which is the WCAG target-size floor.
+ */
+interface Props {
+  label: string;
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  /** Renders a <button> instead of an <a>. Implied when href is omitted. */
+  type?: 'button' | 'submit';
+  busy?: boolean;
+  disabled?: boolean;
+}
+
+const {
+  label,
+  href,
+  variant = 'secondary',
+  type = 'button',
+  busy = false,
+  disabled = false,
+} = Astro.props;
+
+const className = `btn btn-${variant}`;
+---
+
+{
+  href && !disabled ? (
+    <a class={className} href={href} aria-busy={busy ? 'true' : undefined}>
+      {label}
+    </a>
+  ) : (
+    <button
+      class={className}
+      type={type}
+      disabled={disabled}
+      aria-busy={busy ? 'true' : undefined}
+    >
+      {label}
+    </button>
+  )
+}

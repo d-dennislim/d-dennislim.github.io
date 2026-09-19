@@ -1,0 +1,27 @@
+---
+/**
+ * Footer — design-system/components/Footer
+ *
+ * Repeats; introduces nothing. The links are the hero's links, identical in
+ * content. The joke line echoes the Certifications one — never a second joke.
+ */
+import type { Link } from '../types/profile';
+
+interface Props {
+  copyline: string;
+  joke?: string;
+  links: Link[];
+}
+
+const { copyline, joke, links } = Astro.props;
+---
+
+<footer class="footer">
+  <div>
+    <span class="body-sm">{copyline}</span>
+    {joke && <p class="label footer-joke">{joke}</p>}
+  </div>
+  <div class="hero-links">
+    {links.map((link) => <a class="body-sm" href={link.href}>{link.label}</a>)}
+  </div>
+</footer>

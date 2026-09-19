@@ -1,0 +1,53 @@
+---
+/**
+ * Hero — design-system/components/Hero
+ *
+ * The About section: an asymmetric two-up. Left is identity — eyebrow, name in
+ * `display` (the only place that size appears), role in `accent` rather than
+ * `brand`, bio, status, links. Right is the `$ whoami` console panel, the one
+ * place on the page allowed to read as a dashboard widget.
+ */
+import Button from './Button.astro';
+import MetricRow from './MetricRow.astro';
+import type { Link, Metric, Status } from '../types/profile';
+
+interface Props {
+  eyebrow: string;
+  name: string;
+  initials: string;
+  role: string;
+  bio: string;
+  status: Status;
+  links: Link[];
+  metrics: Metric[];
+}
+
+const { eyebrow, name, initials, role, bio, status, links, metrics } = Astro.props;
+---
+
+<div class="hero">
+  <div class="hero-main">
+    <p class="label section-eyebrow">{eyebrow}</p>
+    <h1 class="display hero-name">{name}</h1>
+    <p class="body hero-role">{role}</p>
+    <p class="body hero-bio">{bio}</p>
+    <p class={`status status-${status.tone} hero-status`}>
+      <span class="status-dot"></span><span class="body-sm">{status.label}</span>
+    </p>
+    <div class="hero-links">
+      {
+        links.map((link, index) => (
+          <Button label={link.label} href={link.href} variant={index === 0 ? 'primary' : 'secondary'} />
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="console-panel">
+    <div class="console-head">
+      <span class="label console-prompt">$ whoami</span>
+      <div class="console-avatar" aria-hidden="true">{initials}</div>
+    </div>
+    <MetricRow metrics={metrics} />
+  </div>
+</div>

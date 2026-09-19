@@ -1,0 +1,57 @@
+---
+/**
+ * ProjectCard — design-system/components/ProjectCard
+ *
+ * A bento tile. Exactly one card per page is `featured`: it spans the row and
+ * splits into a description pane and a tags/links pane. More than one and
+ * nothing reads as "the" featured project any more.
+ */
+import TagRow from './TagRow.astro';
+import type { Project } from '../types/profile';
+
+interface Props extends Project {
+  headingLevel?: 2 | 3 | 4;
+}
+
+const {
+  title,
+  description,
+  tags,
+  links,
+  featured = false,
+  eyebrow,
+  headingLevel = 3,
+} = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
+---
+
+{
+  featured ? (
+    <article class="project-card featured">
+      <div>
+        {eyebrow && <span class="label project-eyebrow">{eyebrow}</span>}
+        <Heading class="h2 project-title">{title}</Heading>
+        <p class="body project-desc">{description}</p>
+      </div>
+      <div class="project-aside">
+        <TagRow tags={tags} />
+        <div class="project-links">
+          {links.map((link) => (
+            <a href={link.href}>{link.label}</a>
+          ))}
+        </div>
+      </div>
+    </article>
+  ) : (
+    <article class="project-card">
+      <Heading class="h2 project-title">{title}</Heading>
+      <p class="body project-desc">{description}</p>
+      <TagRow tags={tags} />
+      <div class="project-links">
+        {links.map((link) => (
+          <a href={link.href}>{link.label}</a>
+        ))}
+      </div>
+    </article>
+  )
+}

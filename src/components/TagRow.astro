@@ -1,0 +1,15 @@
+---
+/** The wrapper a Tag is always inside. Not its own design-system folder — it is
+ *  the `.tag-row` class from Tag's README, lifted so callers don't repeat it. */
+import Tag from './Tag.astro';
+
+interface Props {
+  tags: string[];
+}
+
+const { tags } = Astro.props;
+---
+
+<div class="tag-row">
+  {tags.map((tag) => <Tag label={tag} />)}
+</div>

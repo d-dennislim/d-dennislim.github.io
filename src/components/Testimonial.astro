@@ -1,0 +1,21 @@
+---
+/**
+ * Testimonial — design-system/components/Testimonial
+ *
+ * Not on the portfolio page yet. A real person's real words, published at the
+ * attribution level they agreed to in writing — never composed, never tidied,
+ * never anonymous-because-invented. "Engineering Manager, retail client" is a
+ * legitimate attribution when a name isn't cleared.
+ */
+interface Props {
+  quote: string;
+  attribution: string;
+}
+
+const { quote, attribution } = Astro.props;
+---
+
+<figure class="testimonial">
+  <blockquote class="quote testimonial-quote">{quote}</blockquote>
+  <figcaption class="body-sm testimonial-attrib">{attribution}</figcaption>
+</figure>

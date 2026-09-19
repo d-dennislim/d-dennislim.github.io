@@ -1,0 +1,26 @@
+---
+/**
+ * Tag — design-system/components/Tag
+ *
+ * A tech chip, accent-outlined, always inside a `.tag-row`. The interactive
+ * variant exists only for tags that actually filter something; nothing on this
+ * page filters, so it stays off by default.
+ */
+interface Props {
+  label: string;
+  interactive?: boolean;
+  pressed?: boolean;
+}
+
+const { label, interactive = false, pressed = false } = Astro.props;
+---
+
+{
+  interactive ? (
+    <button class="label tag" type="button" aria-pressed={pressed ? 'true' : 'false'}>
+      {label}
+    </button>
+  ) : (
+    <span class="label tag">{label}</span>
+  )
+}

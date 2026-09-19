@@ -1,0 +1,46 @@
+---
+/**
+ * ContactBlock — design-system/components/ContactBlock
+ *
+ * The closing ask. One primary action plus the secondary routes, with the
+ * address also shown as plain text — plenty of people won't click a `mailto:`.
+ */
+import Button from './Button.astro';
+import type { Link } from '../types/profile';
+
+interface Props {
+  eyebrow: string;
+  heading: string;
+  lead: string;
+  emailLabel: string;
+  emailHref: string;
+  actions: Link[];
+  headingLevel?: 2 | 3;
+}
+
+const { eyebrow, heading, lead, emailLabel, emailHref, actions, headingLevel = 2 } =
+  Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+---
+
+<div class="contact-block">
+  <div>
+    <p class="label section-eyebrow">{eyebrow}</p>
+    <Heading class="h1 contact-heading">{heading}</Heading>
+    <p class="body contact-lead">{lead}</p>
+    <p class="body-sm contact-direct">
+      Or just email me: <a href={emailHref}>{emailLabel}</a>
+    </p>
+  </div>
+  <div class="contact-actions">
+    {
+      actions.map((action, index) => (
+        <Button
+          label={action.label}
+          href={action.href}
+          variant={index === 0 ? 'primary' : 'secondary'}
+        />
+      ))
+    }
+  </div>
+</div>

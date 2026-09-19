@@ -1,0 +1,71 @@
+---
+/**
+ * Certifications — design-system/components/Certifications
+ *
+ * A shelf of hex badges. Every badge carries `role="img"` and an `aria-label`
+ * with the full credential name — "SAP C02" read aloud is meaningless, and the
+ * credential is the point. The Golden Jacket tile is filled rather than
+ * outlined and one size up, so it reads as the set's conclusion.
+ *
+ * The jacket and its caption are optional: drop them for a client-facing build,
+ * where the credential is the point and the joke is a peer-audience signal.
+ *
+ * `code` may contain a line break marker `|` to split the badge text over two
+ * lines, which is how the design system sets an exam code.
+ */
+import type { Certification, JacketCertification } from '../types/profile';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  items: Certification[];
+  jacket?: JacketCertification;
+  headingLevel?: 2 | 3;
+}
+
+const { eyebrow, title, items, jacket, headingLevel = 2 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+
+/** Split a badge code onto two lines on `|`, the way the previews do with <br>. */
+const lines = (code: string): string[] => code.split('|').map((part) => part.trim());
+---
+
+<p class="label section-eyebrow">{eyebrow}</p>
+<Heading class="h1 section-title section-title-spaced">{title}</Heading>
+
+<ul class="cert-shelf">
+  {
+    items.map((cert) => (
+      <li>
+        <div class="cert-badge" role="img" aria-label={cert.name}>
+          <span class="cert-code">
+            {lines(cert.code).map((line, index) => (
+              <>
+                {index > 0 && <br />}
+                {line}
+              </>
+            ))}
+          </span>
+        </div>
+      </li>
+    ))
+  }
+
+  {
+    jacket && (
+      <li class="cert-jacket-block">
+        <div class="cert-badge cert-badge-jacket" role="img" aria-label={jacket.name}>
+          <span class="cert-code">
+            {lines(jacket.code).map((line, index) => (
+              <>
+                {index > 0 && <br />}
+                {line}
+              </>
+            ))}
+          </span>
+        </div>
+        <p class="body-sm cert-caption">{jacket.caption}</p>
+      </li>
+    )
+  }
+</ul>

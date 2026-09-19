@@ -1,0 +1,21 @@
+---
+/**
+ * DiagramFigure — design-system/components/DiagramFigure
+ *
+ * Not on the portfolio page yet. The diagram itself goes in the default slot as
+ * inline SVG using the `dg-*` classes, so it retints per mode; the SVG carries
+ * `role="img"` and an `aria-label` stating the conclusion, not the inventory.
+ * The caption is not a duplicate of that label — it says what to take from the
+ * picture.
+ */
+interface Props {
+  caption: string;
+}
+
+const { caption } = Astro.props;
+---
+
+<figure class="diagram-figure">
+  <slot />
+  <figcaption class="body-sm diagram-caption">{caption}</figcaption>
+</figure>

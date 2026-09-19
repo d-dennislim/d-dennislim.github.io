@@ -1,0 +1,38 @@
+---
+/**
+ * ExperienceItem — design-system/components/ExperienceItem
+ *
+ * One role on the rail. No card border or background: the rail is the only
+ * structure, and a boxed card on top of it duplicates the cue.
+ *
+ * `headingLevel` is a prop because the class and the tag are independent — on
+ * the assembled page this is an <h3> carrying the `h3` type style, under the
+ * section's <h2>, so levels descend without skipping.
+ */
+import TagRow from './TagRow.astro';
+import type { ExperienceRole } from '../types/profile';
+
+interface Props extends ExperienceRole {
+  headingLevel?: 2 | 3 | 4;
+}
+
+const { role, company, meta, bullets, tags, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
+
+if (bullets.length > 4) {
+  throw new Error(
+    `ExperienceItem (${role}): ${bullets.length} bullets. The design system caps a role at 4 — beyond that it is a résumé dump.`,
+  );
+}
+---
+
+<li class="exp-item">
+  <div class="exp-head">
+    <Heading class="h3 exp-role">{role} <span class="exp-company">· {company}</span></Heading>
+    <span class="label exp-meta">{meta}</span>
+  </div>
+  <ul class="body exp-bullets">
+    {bullets.map((bullet) => <li>{bullet}</li>)}
+  </ul>
+  <TagRow tags={tags} />
+</li>

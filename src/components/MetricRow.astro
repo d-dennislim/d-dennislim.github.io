@@ -1,0 +1,30 @@
+---
+/**
+ * MetricRow — design-system/components/MetricRow
+ *
+ * Two to four figures. Every figure needs a basis stated somewhere on the page;
+ * that is what `note` is for.
+ *
+ * NB the class is `.metric-tile`, not `.metric` — `.metric` is a type style
+ * compiled out of tokens.json, and both appear on the figure element.
+ */
+import type { Metric } from '../types/profile';
+
+interface Props {
+  metrics: Metric[];
+}
+
+const { metrics } = Astro.props;
+---
+
+<div class="metric-row">
+  {
+    metrics.map((metric) => (
+      <div class="metric-tile">
+        <p class="metric metric-value">{metric.value}</p>
+        <p class="label metric-label">{metric.label}</p>
+        {metric.note && <p class="label metric-note">{metric.note}</p>}
+      </div>
+    ))
+  }
+</div>

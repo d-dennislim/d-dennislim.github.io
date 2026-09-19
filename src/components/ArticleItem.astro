@@ -1,0 +1,22 @@
+---
+/**
+ * ArticleItem — design-system/components/ArticleItem
+ *
+ * Not on the portfolio page yet (the writing list is a later milestone). Links
+ * the canonical location and names the venue if it ran somewhere else.
+ */
+interface Props {
+  title: string;
+  href: string;
+  meta: string;
+  headingLevel?: 2 | 3 | 4;
+}
+
+const { title, href, meta, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
+---
+
+<li class="article-item">
+  <Heading class="h3 article-title"><a href={href}>{title}</a></Heading>
+  <span class="label article-meta">{meta}</span>
+</li>

@@ -1,0 +1,58 @@
+---
+/**
+ * ThemeToggle — a site addition, not a design-system component.
+ *
+ * CLAUDE.md requires a manual toggle; the design system has no component for
+ * one, so this follows §16 Iconography instead: an outlined inline SVG glyph,
+ * 1.5px stroke, sized to the type scale, ink-muted at rest and brand on hover.
+ * Styles live in the marked "site additions" block at the foot of bundle.css.
+ *
+ * The button shows what clicking it will do, so the glyph is the opposite of
+ * the current mode. Which glyph shows is decided in CSS off the resolved
+ * theme — the same `prefers-color-scheme` / `[data-theme]` pair that tokens.css
+ * uses — so it is correct at first paint and stays correct with JS disabled.
+ * The script only keeps `aria-pressed` and the label in step, because those are
+ * state an assistive technology reads rather than something CSS can express.
+ */
+---
+
+<button
+  class="theme-toggle"
+  type="button"
+  id="theme-toggle"
+  aria-pressed="false"
+  aria-label="Dark mode"
+>
+  <!-- Shown in light mode: "switch to dark". -->
+  <svg
+    data-theme-icon="moon"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"></path>
+  </svg>
+
+  <!-- Shown in dark mode: "switch to light". -->
+  <svg
+    data-theme-icon="sun"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <circle cx="12" cy="12" r="4.5"></circle>
+    <path
+      d="M12 2v2M12 20v2M4.2 4.2l1.5 1.5M18.3 18.3l1.5 1.5M2 12h2M20 12h2M4.2 19.8l1.5-1.5M18.3 5.7l1.5-1.5"
+    ></path>
+  </svg>
+</button>
