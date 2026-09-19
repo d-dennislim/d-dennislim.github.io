@@ -109,6 +109,13 @@ export interface ShelfCertification extends Certification {
 
 export interface JacketCertification extends Certification {
   caption: string;
+  /**
+   * The jacket takes `art` like any other badge, but never a verification link:
+   * it isn't an exam, so there is no Credly page behind it. Typed as `never`
+   * rather than left merely unused, so adding one to profile.json fails the
+   * build instead of silently rendering the jacket as a link to nowhere.
+   */
+  verifyUrl?: never;
 }
 
 export interface Project {

@@ -34,12 +34,23 @@
  * A certification without `art` still renders the drawn hexagon, so the two can
  * coexist while the remaining badges are collected.
  *
+ * The jacket takes art the same way but never a `verifyUrl`: it isn't an exam,
+ * so there is no Credly page to verify it against. That makes it the one badge
+ * whose art shows the code *instead of* covering it — see below.
+ *
  * ## The hover reveal
  *
  * The artwork is layered *over* the hexagon rather than replacing it, so fading
  * the art out on hover or focus reveals the code underneath with no duplicate
  * markup. Focus gets the same treatment as hover — a state offered only to mouse
  * users isn't offered to everyone.
+ *
+ * The reveal is keyed on `.cert-link`, so an unlinked badge has no state that
+ * could ever fade the art. The jacket is the only such badge, and it therefore
+ * renders its art *or* its code rather than one over the other — layering them
+ * would bury the code under artwork nothing can lift. Either way the badge
+ * keeps `role="img"` and its `aria-label`, so what a screen reader announces is
+ * identical in both cases.
  *
  * `code` splits on `|` to set a badge over two lines, which is how the design
  * system sets an exam code.
@@ -86,6 +97,12 @@ const lines = (code: string): string[] => code.split('|').map((part) => part.tri
    width. These only hint the aspect for CLS — CSS does the actual sizing. */
 const ART_H = 128;
 const ART_W = Math.round(ART_H * 0.866);
+
+/* The jacket's own box: --hex-size on .cert-badge-jacket, which this page
+   raises to one space-6 step above the shelf badge. Same CLS-hint role as
+   above — CSS still does the actual sizing. */
+const JACKET_H = 152;
+const JACKET_W = Math.round(JACKET_H * 0.866);
 ---
 
 <p class="label section-eyebrow">{eyebrow}</p>
@@ -155,14 +172,29 @@ const ART_W = Math.round(ART_H * 0.866);
   jacket && (
     <div class="cert-jacket-block">
       <div class="cert-badge cert-badge-jacket" role="img" aria-label={jacket.name}>
-        <span class="cert-code">
-          {lines(jacket.code).map((line, index) => (
-            <>
-              {index > 0 && <br />}
-              {line}
-            </>
-          ))}
-        </span>
+        {jacket.art ? (
+          <picture class="cert-art">
+            <source srcset={`/badges/${jacket.art}-256.avif`} type="image/avif" />
+            <source srcset={`/badges/${jacket.art}-256.webp`} type="image/webp" />
+            <img
+              src={`/badges/${jacket.art}-256.webp`}
+              width={JACKET_W}
+              height={JACKET_H}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        ) : (
+          <span class="cert-code">
+            {lines(jacket.code).map((line, index) => (
+              <>
+                {index > 0 && <br />}
+                {line}
+              </>
+            ))}
+          </span>
+        )}
       </div>
       <p class="body-sm cert-caption">{jacket.caption}</p>
     </div>

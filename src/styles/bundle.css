@@ -778,6 +778,19 @@ body {
 
 .cert-shelf .cert-badge { --hex-size: var(--badge-h); }
 
+/* The jacket is the set's conclusion, so the design system sets it one size up
+   from the shelf badge — 104px against its 88px. Raising the shelf to 128px
+   inverted that: the jacket rendered at 0.81x the badges above it and read as a
+   runt rather than a finale, which artwork on both made plain.
+
+   Restored as one rule rather than two magic numbers: the jacket is the shelf
+   badge plus one space-6 step, at both badge sizes. That gives 152px here and
+   112px below the breakpoint, so it departs from the design system's literal
+   104px — but 104 was only ever "88 plus a step", and a single expression that
+   survives a change to --badge-h is worth more than matching a number that was
+   derived from a shelf size this page doesn't use. */
+.cert-badge-jacket { --hex-size: calc(var(--space-16) * 2 + var(--space-6)); }
+
 .cert-shelf li,
 .cert-link { pointer-events: none; }
 .cert-shelf .cert-badge { pointer-events: auto; }
@@ -792,6 +805,8 @@ body {
    rather than written as a literal. */
 @media (max-width: 960px) {
   .cert-shelf { --badge-h: calc(var(--space-16) + var(--space-6)); }
+  /* Same step up from the smaller badge, so the jacket never outgrows its set. */
+  .cert-badge-jacket { --hex-size: calc(var(--space-16) + var(--space-6) * 2); }
 }
 
 /* At 88px the same row is 445px, and with the gutter 573px — which needs 637px
