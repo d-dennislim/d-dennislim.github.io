@@ -1,4 +1,4 @@
-import type { Profile } from '../types/profile';
+import type { ActionRef, ChannelName, Link, Profile } from '../types/profile';
 import data from './profile.json';
 
 /**
@@ -6,5 +6,29 @@ import data from './profile.json';
  * pre-publish check is a single grep for `[[FILL` across the build.
  */
 export const profile: Profile = data as Profile;
+
+/** True while a field is still an unfilled placeholder. */
+const unfilled = (value: string): boolean => value.startsWith('[[FILL');
+
+/**
+ * The href for a channel. `email` is stored as a bare address because Contact
+ * shows it as copyable text as well as linking it, so the `mailto:` belongs
+ * here rather than in the stored value — one field, both uses.
+ *
+ * An unfilled placeholder is passed through untouched: `mailto:[[FILL: ...]]`
+ * would be neither a working link nor a readable placeholder.
+ */
+export const channelHref = (channel: ChannelName): string => {
+  const value = profile.channels[channel];
+  if (channel === 'email' && !unfilled(value)) return `mailto:${value}`;
+  return value;
+};
+
+/** Turn a placement's channel references into the links a component renders. */
+export const resolveActions = (refs: ActionRef[]): Link[] =>
+  refs.map((ref) => ({ label: ref.label, href: channelHref(ref.channel) }));
+
+/** The address as text, for the line in Contact that exists to be copied. */
+export const emailAddress = profile.channels.email;
 
 export default profile;

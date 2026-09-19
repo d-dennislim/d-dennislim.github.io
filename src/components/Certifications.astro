@@ -2,16 +2,23 @@
 /**
  * Certifications — design-system/components/Certifications
  *
- * A shelf of hex badges. Every badge carries `role="img"` and an `aria-label`
- * with the full credential name — "SAP C02" read aloud is meaningless, and the
- * credential is the point. The Golden Jacket tile is filled rather than
- * outlined and one size up, so it reads as the set's conclusion.
+ * A shelf of hex badges with the Golden Jacket beneath it. Every badge carries
+ * `role="img"` and an `aria-label` with the full credential name — "SAP C02"
+ * read aloud is meaningless, and the credential is the point. The jacket tile
+ * is filled rather than outlined and larger than the rest, so it reads as the
+ * set's conclusion; it sits below a hairline, outside the list, so that holds
+ * however many badges the shelf carries.
+ *
+ * The badges are ordered by domain so related credentials sit together, but the
+ * domain names aren't shown: doc/brand-system.md §21 puts Experience above
+ * Certifications, and a labelled row per domain made this the tallest section
+ * on the page.
  *
  * The jacket and its caption are optional: drop them for a client-facing build,
  * where the credential is the point and the joke is a peer-audience signal.
  *
- * `code` may contain a line break marker `|` to split the badge text over two
- * lines, which is how the design system sets an exam code.
+ * `code` splits on `|` to set a badge over two lines, which is how the design
+ * system sets an exam code.
  */
 import type { Certification, JacketCertification } from '../types/profile';
 
@@ -50,22 +57,22 @@ const lines = (code: string): string[] => code.split('|').map((part) => part.tri
       </li>
     ))
   }
-
-  {
-    jacket && (
-      <li class="cert-jacket-block">
-        <div class="cert-badge cert-badge-jacket" role="img" aria-label={jacket.name}>
-          <span class="cert-code">
-            {lines(jacket.code).map((line, index) => (
-              <>
-                {index > 0 && <br />}
-                {line}
-              </>
-            ))}
-          </span>
-        </div>
-        <p class="body-sm cert-caption">{jacket.caption}</p>
-      </li>
-    )
-  }
 </ul>
+
+{
+  jacket && (
+    <div class="cert-jacket-block">
+      <div class="cert-badge cert-badge-jacket" role="img" aria-label={jacket.name}>
+        <span class="cert-code">
+          {lines(jacket.code).map((line, index) => (
+            <>
+              {index > 0 && <br />}
+              {line}
+            </>
+          ))}
+        </span>
+      </div>
+      <p class="body-sm cert-caption">{jacket.caption}</p>
+    </div>
+  )
+}

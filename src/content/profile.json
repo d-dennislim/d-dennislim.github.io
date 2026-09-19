@@ -1,88 +1,129 @@
 {
   "site": {
-    "title": "[[FILL: page title — 'Firstname Lastname — AWS Solutions Architect', under 60 characters]]"
+    "title": "Dennis Lim — AWS Solutions Architect"
   },
   "identity": {
-    "name": "[[FILL: your full name, as it appears on LinkedIn and your resume]]",
-    "initials": "[[FILL: two initials for the console avatar, e.g. 'JS']]",
-    "role": "[[FILL: your role line, e.g. 'AWS Solutions Architect & Cloud Engineer']]",
-    "bio": "[[FILL: first-person bio, three sentences at most — what you are, the two or three things you are deepest in, and what you are open to. No adjective that needs proof.]]",
-    "promptMark": "[[FILL: terminal prompt mark, short, keep the $ — e.g. 'name@portfolio:~$']]",
+    "name": "Dennis Lim",
+    "initials": "DL",
+    "role": "AWS Solutions Architect & Cloud Engineer",
+    "bio": "I design and build scalable, secure cloud infrastructure on AWS.",
+    "promptMark": "dennislim@cloud:~$",
     "status": {
-      "label": "[[FILL: current availability in a few words, e.g. 'Open to new engagements']]",
+      "label": "Open to new engagements",
       "tone": "success"
     }
   },
+  "channels": {
+    "email": "denniscz.lim@gmail.com",
+    "github": "https://github.com/d-dennislim",
+    "linkedin": "https://linkedin.com/in/d-dennislim",
+    "resume": "[[FILL: path to your résumé PDF, e.g. /resume.pdf — figures in it must match the site exactly]]"
+  },
   "hero": {
-    "links": [
-      { "label": "Email me", "href": "[[FILL: mailto: link for your real address]]" },
-      { "label": "GitHub", "href": "[[FILL: your GitHub profile URL]]" },
-      { "label": "LinkedIn", "href": "[[FILL: your LinkedIn profile URL]]" }
+    "actions": [
+      {
+        "channel": "email",
+        "label": "Email me"
+      },
+      {
+        "channel": "github",
+        "label": "GitHub"
+      },
+      {
+        "channel": "linkedin",
+        "label": "LinkedIn"
+      }
     ],
     "metrics": [
       {
-        "value": "[[FILL: figure 1 — a number you can defend in an interview]]",
-        "label": "[[FILL: figure 1 label, one or two words]]",
-        "note": "[[FILL: figure 1 basis and period, e.g. '2023 baseline']]"
+        "value": "3",
+        "label": "years",
+        "note": "2024-present"
       },
       {
-        "value": "[[FILL: figure 2 — a number you can defend in an interview]]",
-        "label": "[[FILL: figure 2 label, one or two words]]",
-        "note": "[[FILL: figure 2 basis and period]]"
+        "value": "20+",
+        "label": "projects",
+        "note": "migration, application, managed services"
       }
     ]
   },
   "sections": {
-    "experienceTitle": "[[FILL: Experience section title, e.g. 'Where I've built']]",
-    "certificationsTitle": "[[FILL: Certifications section title, e.g. 'Yes, all of them']]",
-    "projectsTitle": "[[FILL: Projects section title, e.g. 'What I've shipped']]"
+    "experienceTitle": "Where I've built",
+    "certificationsTitle": "Yes, all of them, and more",
+    "projectsTitle": "What I've shipped"
   },
   "experience": [
     {
-      "role": "[[FILL: role 1 title]]",
-      "company": "[[FILL: role 1 employer or client — generalise if not cleared, e.g. 'a retail client']]",
-      "meta": "[[FILL: role 1 dates and location, e.g. 'Mar 2023 — Present · Remote']]",
+      "role": "Senior Cloud Engineer",
+      "company": "axrail.ai",
+      "meta": "Mar 2024 — Present · Hybrid",
       "bullets": [
-        "[[FILL: role 1 bullet 1 — outcome first, then mechanism]]",
-        "[[FILL: role 1 bullet 2 — outcome first, then mechanism]]",
-        "[[FILL: role 1 bullet 3 — outcome first, then mechanism. Four bullets maximum; delete this line if you have fewer.]]"
+        "Architected and deployed multi-account AWS environments using CDK and Terraform, reducing environment provisioning time by up to 50% for clients in banking, healthcare and retail.",
+        "Led migration of 50+ servers through AWS MRA phases (Assess, Mobilize, Migrate), completing migration cutover within cutover window with zero business impact."
       ],
       "tags": [
-        "[[FILL: role 1 tech tag 1, vendor capitalisation]]",
-        "[[FILL: role 1 tech tag 2]]",
-        "[[FILL: role 1 tech tag 3]]"
-      ]
-    },
-    {
-      "role": "[[FILL: role 2 title]]",
-      "company": "[[FILL: role 2 employer or client]]",
-      "meta": "[[FILL: role 2 dates and location]]",
-      "bullets": [
-        "[[FILL: role 2 bullet 1 — outcome first, then mechanism]]",
-        "[[FILL: role 2 bullet 2 — outcome first, then mechanism]]"
-      ],
-      "tags": [
-        "[[FILL: role 2 tech tag 1 — reuse the same vocabulary as role 1]]",
-        "[[FILL: role 2 tech tag 2]]",
-        "[[FILL: role 2 tech tag 3]]"
+        "AWS",
+        "CDK",
+        "Terraform",
+        "Security"
       ]
     }
   ],
   "certifications": {
     "items": [
-      { "code": "[[FILL: cert 1 code]]", "name": "[[FILL: cert 1 full name, currently held]]" },
-      { "code": "[[FILL: cert 2 code]]", "name": "[[FILL: cert 2 full name, currently held]]" },
-      { "code": "[[FILL: cert 3 code]]", "name": "[[FILL: cert 3 full name, currently held]]" },
-      { "code": "[[FILL: cert 4 code]]", "name": "[[FILL: cert 4 full name, currently held]]" },
-      { "code": "[[FILL: cert 5 code]]", "name": "[[FILL: cert 5 full name, currently held]]" },
-      { "code": "[[FILL: cert 6 code]]", "name": "[[FILL: cert 6 full name, currently held]]" },
-      { "code": "[[FILL: cert 7 code]]", "name": "[[FILL: cert 7 full name, currently held]]" },
-      { "code": "[[FILL: cert 8 code — delete any badge for a cert you do not currently hold]]", "name": "[[FILL: cert 8 full name, currently held]]" }
+      {
+        "code": "SAP|C02",
+        "name": "AWS Certified Solutions Architect – Professional"
+      },
+      {
+        "code": "SAA|C03",
+        "name": "AWS Certified Solutions Architect – Associate"
+      },
+      {
+        "code": "DOP|C02",
+        "name": "AWS Certified DevOps Engineer – Professional"
+      },
+      {
+        "code": "SOA|C02",
+        "name": "AWS Certified SysOps Administrator – Associate"
+      },
+      {
+        "code": "SCS|C02",
+        "name": "AWS Certified Security – Specialty"
+      },
+      {
+        "code": "ANS|C01",
+        "name": "AWS Certified Advanced Networking – Specialty"
+      },
+      {
+        "code": "MLS|C01",
+        "name": "AWS Certified Machine Learning – Specialty"
+      },
+      {
+        "code": "MLA|C01",
+        "name": "AWS Certified Machine Learning Engineer – Associate"
+      },
+      {
+        "code": "DEA|C01",
+        "name": "AWS Certified Data Engineer – Associate"
+      },
+      {
+        "code": "AIF|C01",
+        "name": "AWS Certified AI Practitioner"
+      },
+      {
+        "code": "DVA|C02",
+        "name": "AWS Certified Developer – Associate"
+      },
+      {
+        "code": "CLF|C02",
+        "name": "AWS Certified Cloud Practitioner"
+      }
     ],
     "jacket": {
-      "code": "[[FILL: jacket badge text, two short lines]]",
-      "name": "[[FILL: jacket accessible name — delete the whole jacket entry if you do not hold it]]",
-      "caption": "[[FILL: one dry line under the jacket. The badge is the punchline; the caption should not explain it.]]"
+      "code": "AWS|GOLDEN|JACKET",
+      "name": "AWS Golden Jacket, awarded for holding every active AWS certification",
+      "caption": "its more golden that you think"
     }
   },
   "projects": [
@@ -97,41 +138,79 @@
         "[[FILL: featured project tag 3]]"
       ],
       "links": [
-        { "label": "Repo →", "href": "[[FILL: featured project repo URL — must resolve and have a README]]" },
-        { "label": "Write-up →", "href": "[[FILL: featured project write-up URL, or delete this link]]" }
+        {
+          "label": "Repo →",
+          "href": "[[FILL: featured project repo URL — must resolve and have a README]]"
+        },
+        {
+          "label": "Write-up →",
+          "href": "[[FILL: featured project write-up URL, or delete this link]]"
+        }
       ]
     },
     {
       "title": "[[FILL: project 2 name]]",
       "description": "[[FILL: project 2 — one sentence on what it does and who for]]",
-      "tags": ["[[FILL: project 2 tag 1]]", "[[FILL: project 2 tag 2]]"],
-      "links": [{ "label": "Repo →", "href": "[[FILL: project 2 repo URL]]" }]
+      "tags": [
+        "[[FILL: project 2 tag 1]]",
+        "[[FILL: project 2 tag 2]]"
+      ],
+      "links": [
+        {
+          "label": "Repo →",
+          "href": "[[FILL: project 2 repo URL]]"
+        }
+      ]
     },
     {
       "title": "[[FILL: project 3 name]]",
       "description": "[[FILL: project 3 — one sentence on what it does and who for]]",
-      "tags": ["[[FILL: project 3 tag 1]]", "[[FILL: project 3 tag 2]]"],
-      "links": [{ "label": "Repo →", "href": "[[FILL: project 3 repo URL]]" }]
+      "tags": [
+        "[[FILL: project 3 tag 1]]",
+        "[[FILL: project 3 tag 2]]"
+      ],
+      "links": [
+        {
+          "label": "Repo →",
+          "href": "[[FILL: project 3 repo URL]]"
+        }
+      ]
     }
   ],
   "contact": {
-    "heading": "[[FILL: contact heading, e.g. 'Let's talk about your account']]",
-    "lead": "[[FILL: one line — what kind of work you are open to and how fast you reply, in the same sentence]]",
-    "emailLabel": "[[FILL: your email address, shown as plain text so it can be copied]]",
-    "emailHref": "[[FILL: mailto: link for the same address]]",
+    "heading": "Lets touch base",
+    "lead": "I reply within 1 working day.",
     "actions": [
-      { "label": "Email me", "href": "[[FILL: mailto: link — same address again]]" },
-      { "label": "Download résumé", "href": "[[FILL: path to your real resume PDF, e.g. /resume.pdf]]" },
-      { "label": "LinkedIn", "href": "[[FILL: your LinkedIn profile URL]]" }
+      {
+        "channel": "email",
+        "label": "Email me"
+      },
+      {
+        "channel": "resume",
+        "label": "Download résumé"
+      },
+      {
+        "channel": "linkedin",
+        "label": "LinkedIn"
+      }
     ]
   },
   "footer": {
-    "copyline": "[[FILL: copyright line — ©, the year, and your name]]",
-    "joke": "[[FILL: one-line echo of the Certifications joke — delete if that section is cut, and do not write a second joke]]",
+    "copyline": "© 2026, Dennis Lim",
+    "joke": "Golden Jacket holder. Recertification season is a recurring calendar event.",
     "links": [
-      { "label": "Email", "href": "[[FILL: mailto: link — same address as the hero]]" },
-      { "label": "GitHub", "href": "[[FILL: your GitHub profile URL]]" },
-      { "label": "LinkedIn", "href": "[[FILL: your LinkedIn profile URL]]" }
+      {
+        "channel": "email",
+        "label": "Email"
+      },
+      {
+        "channel": "github",
+        "label": "GitHub"
+      },
+      {
+        "channel": "linkedin",
+        "label": "LinkedIn"
+      }
     ]
   }
 }

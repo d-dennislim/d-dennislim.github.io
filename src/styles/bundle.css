@@ -666,3 +666,36 @@ body {
   .navbar { padding: var(--space-3) var(--space-4); }
   .navbar-links { gap: var(--space-4); }
 }
+
+/* Certification shelf: sized so the section doesn't dominate the page.
+
+   The design system's 88px hex was sized for a shelf of 8. At 12 badges the
+   section measured 1031px — 36% of the page and three times the height of
+   Experience, which doc/brand-system.md §21 ranks above it: "the certifications
+   are remarkable, but experience is what's being bought."
+
+   So the badges drop to 64px, which is `space-16` and therefore still on the
+   scale, and the codes are set over two lines — the form the design system's
+   own preview uses, and the only one that fits the smaller hex. Twelve then sit
+   on a single row inside the 960px container, wrapping to two below ~1024px.
+
+   The `:not()` is load-bearing. The design system declares --hex-size on
+   `.cert-badge` and again on `.cert-badge-jacket`, both at the same
+   specificity; a bare `.cert-badge` override placed after them would win
+   against both and shrink the jacket too. Excluding it here keeps the jacket at
+   its designed 104px — so shrinking the other twelve makes the one tile that
+   should carry weight carry more of it.
+
+   The gap keeps the proportion the system struck at 88px: 24/88 ≈ 27%,
+   16/64 = 25%. */
+
+.cert-badge:not(.cert-badge-jacket) { --hex-size: var(--space-16); }
+
+.cert-shelf { gap: var(--space-4); }
+
+.cert-jacket-block {
+  border-top: 1px solid var(--border);
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+}
+

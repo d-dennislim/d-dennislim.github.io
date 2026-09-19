@@ -11,9 +11,31 @@
 /** Status token names from tokens.json. Not copy — a token, not a claim. */
 export type StatusTone = 'success' | 'warning' | 'danger' | 'info';
 
+/** A resolved link, which is what every component takes. */
 export interface Link {
   label: string;
   href: string;
+}
+
+/**
+ * The contact routes, each stored exactly once.
+ *
+ * Hero, ContactBlock and Footer all offer the same routes with different labels
+ * ("Email me" in the hero, "Email" in the footer), so a placement names the
+ * channel and supplies its own label rather than repeating the address or URL.
+ * The design system requires these to agree — Footer's README calls its links
+ * "identical in content to the Hero's" — and this makes that structural instead
+ * of something to remember.
+ */
+export type ChannelName = 'email' | 'github' | 'linkedin' | 'resume';
+
+/** `email` holds a bare address; the `mailto:` is added when it is resolved. */
+export type Channels = Record<ChannelName, string>;
+
+/** A placement's reference to a channel, with the label used at that spot. */
+export interface ActionRef {
+  channel: ChannelName;
+  label: string;
 }
 
 export interface Metric {
@@ -75,8 +97,9 @@ export interface Profile {
     promptMark: string;
     status: Status;
   };
+  channels: Channels;
   hero: {
-    links: Link[];
+    actions: ActionRef[];
     metrics: Metric[];
   };
   sections: {
@@ -93,15 +116,12 @@ export interface Profile {
   contact: {
     heading: string;
     lead: string;
-    /** The address shown as plain text, so it can be copied without a client. */
-    emailLabel: string;
-    emailHref: string;
-    actions: Link[];
+    actions: ActionRef[];
   };
   footer: {
     copyline: string;
     /** Echoes the Certifications joke. Cut it if that section is cut. */
     joke: string;
-    links: Link[];
+    links: ActionRef[];
   };
 }

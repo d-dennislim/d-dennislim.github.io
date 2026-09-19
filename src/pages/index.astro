@@ -19,7 +19,7 @@ import Certifications from '../components/Certifications.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import Footer from '../components/Footer.astro';
-import { profile } from '../content/profile';
+import { profile, resolveActions, channelHref, emailAddress } from '../content/profile';
 
 /* The five sections, in IA order. The `NN / 05` index shown beside a section
    heading is derived from this list, never authored. */
@@ -67,7 +67,7 @@ if (featured.length > 1) {
           role={profile.identity.role}
           bio={profile.identity.bio}
           status={profile.identity.status}
-          links={profile.hero.links}
+          links={resolveActions(profile.hero.actions)}
           metrics={profile.hero.metrics}
         />
       </div>
@@ -120,9 +120,9 @@ if (featured.length > 1) {
           eyebrow="Contact"
           heading={profile.contact.heading}
           lead={profile.contact.lead}
-          emailLabel={profile.contact.emailLabel}
-          emailHref={profile.contact.emailHref}
-          actions={profile.contact.actions}
+          emailLabel={emailAddress}
+          emailHref={channelHref('email')}
+          actions={resolveActions(profile.contact.actions)}
         />
       </div>
     </section>
@@ -131,6 +131,6 @@ if (featured.length > 1) {
   <Footer
     copyline={profile.footer.copyline}
     joke={profile.footer.joke}
-    links={profile.footer.links}
+    links={resolveActions(profile.footer.links)}
   />
 </Base>
