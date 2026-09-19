@@ -15,6 +15,12 @@ export type StatusTone = 'success' | 'warning' | 'danger' | 'info';
 export interface Link {
   label: string;
   href: string;
+  /**
+   * Set when the link's destination doesn't exist yet — its channel is still an
+   * unfilled placeholder. Rendered muted and non-navigable rather than as a
+   * live link to nowhere. Derived in resolveActions, never authored.
+   */
+  unavailable?: boolean;
 }
 
 /**

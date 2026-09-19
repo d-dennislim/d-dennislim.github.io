@@ -699,3 +699,20 @@ body {
   padding-top: var(--space-6);
 }
 
+/* An action whose destination doesn't exist yet.
+
+   The design system already styles `.btn[aria-disabled="true"]` — 0.45 opacity,
+   `cursor: not-allowed`, `pointer-events: none`. The last of those suppresses
+   hover, which means no tooltip can ever appear and, less obviously, that the
+   `not-allowed` cursor on the line above it can never apply either. Restoring
+   pointer events is what makes the system's own cursor rule do what it says.
+
+   Restoring them also brings back `.btn-secondary:hover`, which would light the
+   border and text up in `brand` — a disabled control that looks interactive on
+   hover. So each variant's hover and active states are reset here to the
+   resting value the design system already defines for it. No new values. */
+
+.btn[aria-disabled="true"] { pointer-events: auto; }
+.btn[aria-disabled="true"]:active { transform: none; }
+.btn-secondary[aria-disabled="true"]:hover { border-color: var(--border-strong); color: var(--ink); }
+.btn-primary[aria-disabled="true"]:hover { background: var(--brand); }

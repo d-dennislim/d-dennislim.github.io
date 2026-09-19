@@ -37,7 +37,12 @@ const { eyebrow, name, initials, role, bio, status, links, metrics } = Astro.pro
     <div class="hero-links">
       {
         links.map((link, index) => (
-          <Button label={link.label} href={link.href} variant={index === 0 ? 'primary' : 'secondary'} />
+          <Button
+            label={link.label}
+            href={link.href}
+            unavailable={link.unavailable}
+            variant={index === 0 ? 'primary' : 'secondary'}
+          />
         ))
       }
     </div>

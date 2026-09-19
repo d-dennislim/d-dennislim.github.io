@@ -5,6 +5,13 @@
  * Two variants only. `primary` is used once per view for the single
  * most-wanted action; everything else is `secondary`. 44px tall by the
  * stylesheet, which is the WCAG target-size floor.
+ *
+ * `unavailable` is for an action whose destination doesn't exist yet. It uses
+ * `aria-disabled` rather than the real `disabled` attribute so the control stays
+ * focusable and discoverable — a truly disabled button is skipped by keyboard
+ * and may not be announced at all. The reason reaches a mouse user through the
+ * tooltip and everyone else through the accessible name, because a state shown
+ * only on hover is invisible to keyboard and touch.
  */
 interface Props {
   label: string;
@@ -14,6 +21,9 @@ interface Props {
   type?: 'button' | 'submit';
   busy?: boolean;
   disabled?: boolean;
+  /** The destination doesn't exist yet: render muted and non-navigable. */
+  unavailable?: boolean;
+  unavailableNote?: string;
 }
 
 const {
@@ -23,13 +33,19 @@ const {
   type = 'button',
   busy = false,
   disabled = false,
+  unavailable = false,
+  unavailableNote = 'Not available yet',
 } = Astro.props;
 
 const className = `btn btn-${variant}`;
+
+/* An <a> with a placeholder href still navigates, so an unavailable action has
+   to fall through to the <button> branch. */
+const isLink = Boolean(href) && !disabled && !unavailable;
 ---
 
 {
-  href && !disabled ? (
+  isLink ? (
     <a class={className} href={href} aria-busy={busy ? 'true' : undefined}>
       {label}
     </a>
@@ -38,9 +54,12 @@ const className = `btn btn-${variant}`;
       class={className}
       type={type}
       disabled={disabled}
+      aria-disabled={unavailable ? 'true' : undefined}
+      title={unavailable ? unavailableNote : undefined}
       aria-busy={busy ? 'true' : undefined}
     >
       {label}
+      {unavailable && <span class="visually-hidden"> — {unavailableNote}</span>}
     </button>
   )
 }

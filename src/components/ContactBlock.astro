@@ -38,6 +38,7 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3';
         <Button
           label={action.label}
           href={action.href}
+          unavailable={action.unavailable}
           variant={index === 0 ? 'primary' : 'secondary'}
         />
       ))

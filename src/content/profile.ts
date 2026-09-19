@@ -24,9 +24,20 @@ export const channelHref = (channel: ChannelName): string => {
   return value;
 };
 
-/** Turn a placement's channel references into the links a component renders. */
+/**
+ * Turn a placement's channel references into the links a component renders.
+ *
+ * A channel that is still a placeholder is marked `unavailable`, so the button
+ * renders muted instead of pointing at a string. Deriving it here rather than
+ * flagging it in profile.json means there is nothing to remember to remove: the
+ * control goes live by itself the moment a real destination is filled in.
+ */
 export const resolveActions = (refs: ActionRef[]): Link[] =>
-  refs.map((ref) => ({ label: ref.label, href: channelHref(ref.channel) }));
+  refs.map((ref) => ({
+    label: ref.label,
+    href: channelHref(ref.channel),
+    unavailable: unfilled(profile.channels[ref.channel]) || undefined,
+  }));
 
 /** The address as text, for the line in Contact that exists to be copied. */
 export const emailAddress = profile.channels.email;
