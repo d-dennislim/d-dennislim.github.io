@@ -5,3 +5,6 @@ dist/
 design-system/
 doc/
 CLAUDE.md
+
+# build output
+public/badges/

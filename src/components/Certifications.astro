@@ -2,30 +2,54 @@
 /**
  * Certifications — design-system/components/Certifications
  *
- * A shelf of hex badges with the Golden Jacket beneath it. Every badge carries
- * `role="img"` and an `aria-label` with the full credential name — "SAP C02"
- * read aloud is meaningless, and the credential is the point. The jacket tile
- * is filled rather than outlined and larger than the rest, so it reads as the
- * set's conclusion; it sits below a hairline, outside the list, so that holds
- * however many badges the shelf carries.
+ * A shelf of hex badges with the Golden Jacket beneath it.
  *
- * The badges are ordered by domain so related credentials sit together, but the
- * domain names aren't shown: doc/brand-system.md §21 puts Experience above
- * Certifications, and a labelled row per domain made this the tallest section
- * on the page.
+ * ## Grouping — by tier, and labelled
  *
- * The jacket and its caption are optional: drop them for a client-facing build,
- * where the credential is the point and the joke is a peer-audience signal.
+ * An earlier version ordered the badges by domain and showed no labels, because
+ * a labelled row per domain made this the tallest section on the page. Ordering
+ * without labels turned out to be the worse trade: the reader can't recover the
+ * principle, so a deliberate order reads as an arbitrary one.
+ *
+ * Tier is the grouping that pays for its labels. There are four of them against
+ * six-or-so domains, the names are one word each, and the tier is already the
+ * axis a reader ranks AWS credentials on — so the row itself carries meaning
+ * that twelve loose hexagons couldn't. Labels sit in a left gutter rather than
+ * above each row, which is what keeps the height affordable: see the
+ * `.cert-tiers` rule in bundle.css.
+ *
+ * Tier order is seniority descending. A tier with no certifications in it is
+ * dropped rather than rendered empty, so a partial set still looks deliberate.
+ *
+ * ## Badge artwork — a deliberate departure from the design system
+ *
+ * design-system/README.md, this component's own README and brand-system §16 all
+ * say not to reproduce AWS's badge artwork. All three qualify it as "without
+ * checking their current asset terms", and §16 points at Credly because it links
+ * to live verification. That check was made, and the answer here is to do both:
+ * serve our own optimised copy of the art (so the page stays inside its weight
+ * budget) and link every badge to its Credly verification page, which is the
+ * context those share assets exist for.
+ *
+ * A certification without `art` still renders the drawn hexagon, so the two can
+ * coexist while the remaining badges are collected.
+ *
+ * ## The hover reveal
+ *
+ * The artwork is layered *over* the hexagon rather than replacing it, so fading
+ * the art out on hover or focus reveals the code underneath with no duplicate
+ * markup. Focus gets the same treatment as hover — a state offered only to mouse
+ * users isn't offered to everyone.
  *
  * `code` splits on `|` to set a badge over two lines, which is how the design
  * system sets an exam code.
  */
-import type { Certification, JacketCertification } from '../types/profile';
+import type { CertTier, ShelfCertification, JacketCertification } from '../types/profile';
 
 interface Props {
   eyebrow: string;
   title: string;
-  items: Certification[];
+  items: ShelfCertification[];
   jacket?: JacketCertification;
   headingLevel?: 2 | 3;
 }
@@ -33,31 +57,99 @@ interface Props {
 const { eyebrow, title, items, jacket, headingLevel = 2 } = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
 
+/* The tier rows head the shelf, so they sit one level under the section's own
+   heading — h3 normally, h4 where the section is embedded at h3. CLAUDE.md
+   hard rule 3: heading levels descend without skipping. */
+const TierHeading = `h${headingLevel + 1}` as 'h3' | 'h4';
+
+/**
+ * Seniority descending, which is also the order AWS lists them in. The visible
+ * label is here rather than in profile.json: it's a fixed rendering of the tier
+ * token, not copy that varies per certification.
+ */
+const TIERS: { tier: CertTier; label: string }[] = [
+  { tier: 'professional', label: 'Professional' },
+  { tier: 'specialty', label: 'Specialty' },
+  { tier: 'associate', label: 'Associate' },
+  { tier: 'foundational', label: 'Foundational' },
+];
+
+const groups = TIERS.map((t) => ({
+  ...t,
+  certs: items.filter((cert) => cert.tier === t.tier),
+})).filter((group) => group.certs.length > 0);
+
 /** Split a badge code onto two lines on `|`, the way the previews do with <br>. */
 const lines = (code: string): string[] => code.split('|').map((part) => part.trim());
+
+/* The rendered badge box: --badge-h in bundle.css, and its regular-hexagon
+   width. These only hint the aspect for CLS — CSS does the actual sizing. */
+const ART_H = 128;
+const ART_W = Math.round(ART_H * 0.866);
 ---
 
 <p class="label section-eyebrow">{eyebrow}</p>
 <Heading class="h1 section-title section-title-spaced">{title}</Heading>
 
-<ul class="cert-shelf">
+<div class="cert-tiers">
   {
-    items.map((cert) => (
-      <li>
-        <div class="cert-badge" role="img" aria-label={cert.name}>
-          <span class="cert-code">
-            {lines(cert.code).map((line, index) => (
-              <>
-                {index > 0 && <br />}
-                {line}
-              </>
-            ))}
-          </span>
-        </div>
-      </li>
+    groups.map((group) => (
+      <>
+        <TierHeading class="label cert-tier-label">{group.label}</TierHeading>
+        <ul class="cert-shelf">
+          {group.certs.map((cert) => {
+            const code = (
+              <span class="cert-code">
+                {lines(cert.code).map((line, index) => (
+                  <>
+                    {index > 0 && <br />}
+                    {line}
+                  </>
+                ))}
+              </span>
+            );
+
+            const art = cert.art && (
+              <picture class="cert-art">
+                <source srcset={`/badges/${cert.art}-256.avif`} type="image/avif" />
+                <source srcset={`/badges/${cert.art}-256.webp`} type="image/webp" />
+                <img
+                  src={`/badges/${cert.art}-256.webp`}
+                  width={ART_W}
+                  height={ART_H}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            );
+
+            /* Linked: the <a> carries the only accessible name, so the badge drops
+               role="img" and the artwork is decorative. Unlinked: the badge keeps
+               role="img" and names itself, exactly as it did before art existed. */
+            return (
+              <li>
+                {cert.verifyUrl ? (
+                  <a class="cert-link" href={cert.verifyUrl} aria-label={`${cert.name} — verify on Credly`}>
+                    <span class="cert-badge">
+                      {code}
+                      {art}
+                    </span>
+                  </a>
+                ) : (
+                  <span class="cert-badge" role="img" aria-label={cert.name}>
+                    {code}
+                    {art}
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </>
     ))
   }
-</ul>
+</div>
 
 {
   jacket && (

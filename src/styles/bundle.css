@@ -667,31 +667,151 @@ body {
   .navbar-links { gap: var(--space-4); }
 }
 
-/* Certification shelf: sized so the section doesn't dominate the page.
+/* Certification shelf: hexagonal badges in a labelled row per AWS tier.
 
-   The design system's 88px hex was sized for a shelf of 8. At 12 badges the
-   section measured 1031px — 36% of the page and three times the height of
-   Experience, which doc/brand-system.md §21 ranks above it: "the certifications
-   are remarkable, but experience is what's being bought."
+   Shape. Measured from the artwork's alpha channel, Credly's badge is a
+   *regular* pointy-top hexagon: 507x584, a ratio of 0.8682 against sqrt(3)/2 =
+   0.8660 — a 0.25% difference. So the box is given that ratio and the clip runs
+   corner to corner, rather than a square with an inset faking it. sqrt(3)/2 is
+   a geometric constant for a regular hexagon, the same category as the 44px
+   WCAG floor documented elsewhere in this file, not a design value.
 
-   So the badges drop to 64px, which is `space-16` and therefore still on the
-   scale, and the codes are set over two lines — the form the design system's
-   own preview uses, and the only one that fits the smaller hex. Twelve then sit
-   on a single row inside the 960px container, wrapping to two below ~1024px.
+   Ours is what rotates to meet theirs: brand-system §16 notes AWS's terms are
+   specific about modification, so re-rotating their artwork is the one thing
+   not to do.
 
-   The `:not()` is load-bearing. The design system declares --hex-size on
-   `.cert-badge` and again on `.cert-badge-jacket`, both at the same
-   specificity; a bare `.cert-badge` override placed after them would win
-   against both and shrink the jacket too. Excluding it here keeps the jacket at
-   its designed 104px — so shrinking the other twelve makes the one tile that
-   should carry weight carry more of it.
+   Layout. This replaced a nested honeycomb — twelve badges as 6 + 6 with the
+   second row shifted half a column into the first row's notches. The comb was
+   tighter (224px against 560px here) but it could only ever be one undivided
+   block of twelve, and the order inside it was unlabelled and so unreadable.
+   See the grouping note in Certifications.astro. Interlocking survives only
+   between rows of equal width that are meant to read as one mass, which is
+   exactly what tier rows are not, so the tessellation offsets are gone and the
+   shelf is back to the design system's own flex row — this file now only
+   narrows its gap and sets the badge size.
 
-   The gap keeps the proportion the system struck at 88px: 24/88 ≈ 27%,
-   16/64 = 25%. */
+   Hit-testing. The li and the link are unclipped rectangles, so either would
+   capture pointer events across the notches between adjacent hexagons.
+   Clipping the link would fix the hit area but also clip its focus ring, so
+   pointer events move to the badge instead — which is clipped, and so has the
+   hexagon's exact hit area. Hover still propagates to the link, clicks still
+   bubble to it, and the ring stays intact. */
 
-.cert-badge:not(.cert-badge-jacket) { --hex-size: var(--space-16); }
+.cert-badge, .cert-shelf { --hex-ratio: 0.866; }   /* sqrt(3)/2 */
 
-.cert-shelf { gap: var(--space-4); }
+.cert-badge {
+  width: calc(var(--hex-size) * var(--hex-ratio));
+  height: var(--hex-size);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+
+  /* The design system's 1px accent-aws border can't survive a clip-path: the
+     polygon meets the box edge only along the two vertical sides, so the four
+     diagonal edges cut through the interior where no border is painted. That
+     left amber ticks at the sides and nothing elsewhere — invisible at 64px,
+     a defect at 128px.
+
+     So the outline is rebuilt as fill: the badge itself is accent-aws and an
+     inset pseudo-element in surface-raised is clipped to the same hexagon,
+     leaving a rim. It has to be absolutely positioned or it would become a
+     flex item of the badge. */
+  border-color: transparent;
+  background: var(--accent-aws);
+}
+.cert-badge::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  background: var(--surface-raised);
+  clip-path: inherit;
+}
+/* The jacket is filled accent-aws by design, so it needs no rim. */
+.cert-badge-jacket::before { background: var(--accent-aws); }
+
+/* An absolutely positioned pseudo-element paints above in-flow content, so the
+   rim would cover the code. Positioning the code lifts it back on top — the art
+   is already absolute and later in the DOM, so it needs nothing. */
+.cert-badge .cert-code { position: relative; }
+
+/* Tier rows.
+
+   Two columns: the labels in a left gutter, each tier's shelf beside it. A
+   label above its row would be the obvious layout and costs 120px of height
+   across four tiers — height being the reason the previous version showed no
+   labels at all — so the gutter is what makes labelling affordable. The label
+   column is `max-content`, i.e. as wide as "Foundational" and no wider.
+
+   Labels are left-aligned, not right-aligned against the badges: the section's
+   left edge is a line the eyebrow and the heading already sit on, and ragged
+   text there would break it. The ragged edge goes in the gutter instead, where
+   the column gap absorbs it.
+
+   ink-muted, not accent: the accent is spent on the section eyebrow, and a
+   second accent-coloured label per row would compete with it. 5.16:1 light and
+   8.17:1 dark against surface-sunken, so it clears 4.5:1 as small text. No
+   divider rule between tiers — `--border` is 1.13:1 on this band, well under
+   the 3:1 a meaningful line needs, and the label already does the work. */
+.cert-tiers {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: var(--space-6);
+  row-gap: var(--space-4);   /* matches --cert-gap, so the grid reads evenly both ways */
+  align-items: center;
+}
+
+.cert-tier-label {
+  margin: 0;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+}
+
+.cert-shelf {
+  /* One source for the badge geometry: the badge reads it for its own size and
+     the media queries below are the only things that change it. */
+  --cert-gap: var(--space-4);
+  --badge-h: calc(var(--space-16) * 2);
+
+  /* Tighter than the design system's space-6. Hexagons in a row leave notches
+     between them at every gap, so the same gap reads wider here than it would
+     between rectangles. */
+  gap: var(--cert-gap);
+}
+
+.cert-shelf .cert-badge { --hex-size: var(--badge-h); }
+
+.cert-shelf li,
+.cert-link { pointer-events: none; }
+.cert-shelf .cert-badge { pointer-events: auto; }
+
+/* The widest row is the five Associate badges: 5 x 110.8px plus four 16px gaps
+   is 618px, and the label gutter and its column gap add ~110px on top — 792px
+   of content, 856px of viewport once section padding is counted. So the switch
+   is the container token itself rather than a viewport breakpoint: the full-size
+   badge appears exactly when the layout can supply the width it needs.
+
+   Below it the badge drops to the design system's own 88px — built from tokens
+   rather than written as a literal. */
+@media (max-width: 960px) {
+  .cert-shelf { --badge-h: calc(var(--space-16) + var(--space-6)); }
+}
+
+/* At 88px the same row is 445px, and with the gutter 573px — which needs 637px
+   of viewport. container-narrow is the token just above that, so the gutter
+   collapses there and the labels move above their rows.
+
+   One column makes every label and every shelf its own grid row, so the row-gap
+   alone would space a label from its own shelf exactly as far as from the
+   previous tier's, and the grouping would be lost. The gap tightens to bind each
+   label to its shelf, and a margin on the label reopens the distance between
+   groups. */
+@media (max-width: 720px) {
+  .cert-tiers {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-2);
+    align-items: start;
+  }
+  .cert-tier-label { margin-top: var(--space-4); }
+  .cert-tier-label:first-child { margin-top: 0; }
+}
 
 .cert-jacket-block {
   border-top: 1px solid var(--border);
@@ -716,3 +836,32 @@ body {
 .btn[aria-disabled="true"]:active { transform: none; }
 .btn-secondary[aria-disabled="true"]:hover { border-color: var(--border-strong); color: var(--ink); }
 .btn-primary[aria-disabled="true"]:hover { background: var(--brand); }
+
+/* Certification badge artwork, layered over the drawn hexagon.
+
+   The art sits on top of the existing `.cert-badge` rather than replacing it,
+   so fading it out on hover or focus reveals the code underneath — no second
+   copy of anything, and a certification with no artwork yet renders the hexagon
+   exactly as before.
+
+   Focus is treated the same as hover on purpose: a reveal offered only to mouse
+   users isn't offered to everyone. `--duration-fast` is the motion scale's
+   opacity step, and the global prefers-reduced-motion block already collapses
+   it. */
+
+.cert-link { display: block; }
+
+.cert-badge { position: relative; }
+
+.cert-art {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+/* object-fit guards the non-square box: a square source would otherwise
+   stretch to fill it. */
+.cert-art img { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+.cert-link:hover .cert-art,
+.cert-link:focus-visible .cert-art { opacity: 0; }

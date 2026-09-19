@@ -67,11 +67,44 @@ export interface ExperienceRole {
   tags: string[];
 }
 
+/**
+ * AWS's own tier for an exam, in the order the shelf presents them.
+ *
+ * Not a claim about the holder, so hard rule 1 doesn't bite: the tier is an
+ * attribute AWS publishes for each exam, and for nine of the twelve it is a
+ * word in the credential's own name. AIF and CLF are the two AWS files under
+ * Foundational.
+ *
+ * Authored rather than derived from the exam code. Deriving it would mean a
+ * lookup table keyed on prefixes that AWS chose for other reasons — SAP and
+ * SAA differ by one letter and sit two tiers apart — and that table would be
+ * this data, only harder to read and further from the credential it describes.
+ */
+export type CertTier = 'professional' | 'specialty' | 'associate' | 'foundational';
+
 export interface Certification {
   /** The short code shown in the badge, e.g. two lines of an exam code. */
   code: string;
   /** Full credential name — this is what a screen reader announces. */
   name: string;
+  /**
+   * Basename of the badge artwork in assets/badges, without extension.
+   * Optional: a certification without art falls back to the drawn hexagon, so
+   * badges can be added one at a time.
+   */
+  art?: string;
+  /** Credly verification page. Optional; without it the badge isn't a link. */
+  verifyUrl?: string;
+}
+
+/**
+ * A certification on the shelf, which is grouped under its tier.
+ *
+ * `tier` lives here rather than on Certification so the jacket can't be given
+ * one: it isn't an exam and sits below the shelf, not in a tier row.
+ */
+export interface ShelfCertification extends Certification {
+  tier: CertTier;
 }
 
 export interface JacketCertification extends Certification {
@@ -115,7 +148,7 @@ export interface Profile {
   };
   experience: ExperienceRole[];
   certifications: {
-    items: Certification[];
+    items: ShelfCertification[];
     jacket: JacketCertification;
   };
   projects: Project[];

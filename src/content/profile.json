@@ -73,51 +73,87 @@
     "items": [
       {
         "code": "SAP|C02",
-        "name": "AWS Certified Solutions Architect – Professional"
-      },
-      {
-        "code": "SAA|C03",
-        "name": "AWS Certified Solutions Architect – Associate"
+        "name": "AWS Certified Solutions Architect – Professional",
+        "tier": "professional",
+        "art": "aws-certified-solutions-architect-professional",
+        "verifyUrl": "https://www.credly.com/badges/2673548b-0cc1-44af-b163-7a7ceb28d76a"
       },
       {
         "code": "DOP|C02",
-        "name": "AWS Certified DevOps Engineer – Professional"
-      },
-      {
-        "code": "SOA|C02",
-        "name": "AWS Certified SysOps Administrator – Associate"
+        "name": "AWS Certified DevOps Engineer – Professional",
+        "tier": "professional",
+        "art": "aws-certified-devops-engineer-professional",
+        "verifyUrl": "https://www.credly.com/badges/5727c6b5-6e7e-478a-b636-33af5698aeef"
       },
       {
         "code": "SCS|C02",
-        "name": "AWS Certified Security – Specialty"
+        "name": "AWS Certified Security – Specialty",
+        "tier": "specialty",
+        "art": "aws-certified-security-specialty",
+        "verifyUrl": "https://www.credly.com/badges/e823c5f5-0023-4274-b725-02f1e5db6448"
       },
       {
         "code": "ANS|C01",
-        "name": "AWS Certified Advanced Networking – Specialty"
+        "name": "AWS Certified Advanced Networking – Specialty",
+        "tier": "specialty",
+        "art": "aws-certified-advanced-networking-specialty",
+        "verifyUrl": "https://www.credly.com/badges/03698a3e-25e9-4939-9f60-781e1f2a7902"
       },
       {
         "code": "MLS|C01",
-        "name": "AWS Certified Machine Learning – Specialty"
+        "name": "AWS Certified Machine Learning – Specialty",
+        "tier": "specialty",
+        "art": "aws-certified-machine-learning-specialty",
+        "verifyUrl": "https://www.credly.com/badges/1e11d041-dcd1-4e1f-aa01-be328d5b202c"
       },
       {
-        "code": "MLA|C01",
-        "name": "AWS Certified Machine Learning Engineer – Associate"
+        "code": "SAA|C03",
+        "name": "AWS Certified Solutions Architect – Associate",
+        "tier": "associate",
+        "art": "aws-certified-solutions-architect-associate",
+        "verifyUrl": "https://www.credly.com/badges/ebcbde5e-5504-4e18-a2da-10cd7fb22f2a"
       },
       {
-        "code": "DEA|C01",
-        "name": "AWS Certified Data Engineer – Associate"
-      },
-      {
-        "code": "AIF|C01",
-        "name": "AWS Certified AI Practitioner"
+        "code": "SOA|C02",
+        "name": "AWS Certified SysOps Administrator – Associate",
+        "tier": "associate",
+        "art": "aws-certified-sysops-administrator-associate",
+        "verifyUrl": "https://www.credly.com/badges/41721fe9-e581-401c-914e-b60b0f0951f4"
       },
       {
         "code": "DVA|C02",
-        "name": "AWS Certified Developer – Associate"
+        "name": "AWS Certified Developer – Associate",
+        "tier": "associate",
+        "art": "aws-certified-developer-associate",
+        "verifyUrl": "https://www.credly.com/badges/8b51a393-b503-45db-8521-342eaaf58f20"
+      },
+      {
+        "code": "DEA|C01",
+        "name": "AWS Certified Data Engineer – Associate",
+        "tier": "associate",
+        "art": "aws-certified-data-engineer-associate",
+        "verifyUrl": "https://www.credly.com/badges/8384a357-9554-4e87-b10a-d4c5dc36d0c8"
+      },
+      {
+        "code": "MLA|C01",
+        "name": "AWS Certified Machine Learning Engineer – Associate",
+        "tier": "associate",
+        "art": "aws-certified-machine-learning-engineer-associate",
+        "verifyUrl": "https://www.credly.com/badges/711824c7-9e7c-4cfa-b9ae-c1e20ea99cb7"
       },
       {
         "code": "CLF|C02",
-        "name": "AWS Certified Cloud Practitioner"
+        "name": "AWS Certified Cloud Practitioner",
+        "tier": "foundational",
+        "art": "aws-certified-cloud-practitioner",
+        "verifyUrl": "https://www.credly.com/badges/a9f1e7f5-4313-4b46-902c-3820583662a1"
+      },
+      {
+        "code": "AIF|C01",
+        "name": "AWS Certified AI Practitioner",
+        "tier": "foundational",
+        "art": "aws-certified-ai-practitioner",
+        "verifyUrl": "https://www.credly.com/badges/557a524b-3772-4bbc-b16b-01c1bf44efa8"
       }
     ],
     "jacket": {
