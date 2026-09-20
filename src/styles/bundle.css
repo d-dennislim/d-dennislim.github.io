@@ -880,3 +880,58 @@ body {
 
 .cert-link:hover .cert-art,
 .cert-link:focus-visible .cert-art { opacity: 0; }
+
+/* Anchor targets clear the sticky bar.
+
+   `.navbar` is `position: sticky; top: 0`, so a nav-link jump scrolls the
+   section flush with the viewport top and the bar then sits on top of it,
+   covering the eyebrow and the top of the heading. `.section`'s own
+   `space-16` top padding isn't the answer: it's 64px against a ~70px bar, so
+   the overlap survives it, and at the 720px breakpoint the padding steps down
+   to `space-12` and the bite gets bigger.
+
+   `scroll-padding-top` on the scroll container fixes every in-page target at
+   once — the five nav links, the `#top` mark and the skip link — rather than a
+   `scroll-margin-top` repeated on each. It offsets only where the scroll
+   lands, so nothing about the page's layout or spacing changes; the section's
+   existing padding stays the breathing room between bar and heading.
+
+   The bar itself is 70px: the 44px target floor its links and toggle both
+   carry, its `space-3` padding top and bottom, and the 2px brand rule beneath
+   it. The offset is deliberately one `space-3` short of that — 44px plus a
+   single step — because clearing the bar exactly puts the eyebrow a full
+   `space-16` below it, and against a heading that already has that much air
+   the result reads as a gap rather than as the top of a section.
+
+   Landing 14px high is safe, and only because of what sits in those 14px:
+   `.section`'s `space-16` top padding is empty, so the bar overlaps padding,
+   never content. Measured clearance from bar to eyebrow is 50px. The thing to
+   keep true is the premise — an anchor target has at least `space-3` of empty
+   space above its first painted content. Point an anchor at content directly,
+   or at a section without that padding, and the top 14px of it goes under the
+   bar. The name says offset, not bar height, for that reason. */
+
+:root { --anchor-offset: calc(44px + var(--space-3)); }
+html { scroll-padding-top: var(--anchor-offset); }
+
+/* Below the breakpoint the bar stops being sticky, so there's nothing to clear.
+
+   The offset above is one number and the bar is not: the navbar wraps (see the
+   wrapping fix above) and measurement puts it at 70px down to 620px, 106px at
+   500–600px, 174px at 390px and 234px at 360px, as the link list breaks to two
+   rows and the toggle drops to a third. No single `scroll-padding-top` tracks
+   that, and the widths where it steps are set by the pixel width of five link
+   labels — not by anything in the token scale — so they can't be written as
+   breakpoints that survive a label being renamed.
+
+   A 234px bar is also a third of a 360x640 phone screen held permanently, which
+   is a poor trade for a five-link bar on a page this short. So below the design
+   system's own 720px breakpoint the bar scrolls away with the page: every
+   anchor then lands flush at the viewport top with the section's `space-12`
+   padding above its heading, and the offset goes back to nothing. Sticky
+   survives at every width where it costs one 70px row. */
+
+@media (max-width: 720px) {
+  .navbar { position: static; }
+  html { scroll-padding-top: 0; }
+}
