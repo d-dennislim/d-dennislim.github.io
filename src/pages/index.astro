@@ -83,6 +83,12 @@ for (const project of featured) {
 <Base title={profile.site.title}>
   <a class="skip-link body-sm" href="#main">Skip to content</a>
 
+  {/*
+    `currentHref` is the answer at first paint and the answer with JavaScript
+    off — the top of the page is About. It is not stale: NavBar's section spy
+    takes the mark from here and keeps it on whichever section the reader has
+    scrolled to. Delete this and the bar loses its no-JS active state.
+  */}
   <NavBar
     promptMark={profile.identity.promptMark}
     commands={profile.identity.promptCommands}

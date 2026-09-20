@@ -1051,8 +1051,45 @@ body {
    or at a section without that padding, and the top 14px of it goes under the
    bar. The name says offset, not bar height, for that reason. */
 
+/* And they glide there rather than teleporting.
+
+   The same set of jumps — the five nav links, the `#top` mark, the skip link —
+   all move the reader inside one document. Arriving instantly says nothing
+   about which way the page went or how far, so the reader has to read the
+   heading to work out where they landed; animating the jump carries that for
+   them, for no shipped bytes and no script. It belongs in this rule rather than
+   its own: `scroll-padding-top` says where an in-page jump lands and
+   `scroll-behavior` says how it gets there, and neither reads correctly
+   without the other beside it.
+
+   The duration is the browser's, and distance-dependent. That is why it doesn't
+   come from the motion scale and can't: `--duration-fast` and `--duration-base`
+   cover transitions of colour, border, transform and shadow, not a viewport
+   scroll. `smooth` is a keyword, so there is no value here to take from the
+   scale and none invented.
+
+   brand-system.md §19 ("nothing animates on load") isn't crossed. This only
+   ever runs in answer to a click — the same category as the card's 2px hover
+   lift — and never on load.
+
+   **Reduced motion is honoured by the global block above, not here.** That
+   block sets `scroll-behavior: auto !important` on `*, *::before, *::after`,
+   and `html` matches `*`, so a reader who asks for no motion gets the instant
+   jump back with no second media query at this rule. Keep that declaration on
+   the `*` selector: narrow it to the classes it looks like it's for and this
+   line silently becomes a vestibular hazard with nothing marking it.
+
+   The skip link glides too, which is a call rather than an oversight: `#main`
+   starts immediately under the bar, so from the top of the page the distance is
+   ~14px and the animation is imperceptible — and being a property of the scroll
+   container, it cannot be excluded for one link without JavaScript, which that
+   14px does not justify. */
+
 :root { --anchor-offset: calc(44px + var(--space-3)); }
-html { scroll-padding-top: var(--anchor-offset); }
+html {
+  scroll-padding-top: var(--anchor-offset);
+  scroll-behavior: smooth;
+}
 
 /* Below the breakpoint the bar stops being sticky, so there's nothing to clear.
 

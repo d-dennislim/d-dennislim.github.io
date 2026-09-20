@@ -302,3 +302,116 @@ if (tooLong) {
     }
   }
 </script>
+
+<script>
+  /**
+   * The section spy: keep `aria-current` on the link for the section the
+   * reader is actually looking at.
+   *
+   * The design system's NavBar marks the current section with
+   * `aria-current="page"` so the underline shows without JS, and index.astro
+   * still renders that mark server-side. On a five-section one page, though,
+   * "the current section" only has a live answer, so this keeps that mark true
+   * as the page scrolls. With JavaScript off the server-rendered answer stands
+   * and the bar still works — this is an enhancement on top of it, never a
+   * replacement for it.
+   *
+   * `aria-current="page"` is the marker because bundle.css selects on that
+   * exact value, above the site-additions fence. Not ours to change.
+   *
+   * The URL is deliberately left alone. Writing the hash as the reader scrolls
+   * would flicker the address bar through five values on one flick of the
+   * wheel, and the hash is spoken for elsewhere.
+   */
+
+  const navList = document.querySelector('.navbar-links');
+
+  if (navList) {
+    /* Only same-page anchors with a target that exists. A NavBar whose links
+       are routes — the case-study pages carry one — then finds no pairs and
+       this does nothing, rather than marking the wrong link. */
+    const spied = [...navList.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')]
+      .map((link) => ({ link, section: document.querySelector(link.hash) }))
+      .filter((pair): pair is { link: HTMLAnchorElement; section: Element } => pair.section !== null);
+
+    if (spied.length > 1) {
+      /* Where a section counts as arrived: the same line a click would land it
+         on. bundle.css sets `scroll-padding-top` to `--anchor-offset` under
+         the sticky bar and to 0 below the breakpoint where the bar goes
+         static, so reading it here means a link lights exactly when clicking
+         it would have stopped, the number has one home, and the breakpoint is
+         followed for free. Read live, not cached: it changes on resize. */
+      const line = (): number =>
+        parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+
+      const activeSection = (): Element => {
+        /* Bottom of the document wins outright. Contact and the footer are
+           shorter than a tall viewport, so Contact's top can never reach the
+           line however far you scroll — without this the fifth of five links
+           is unreachable, which is worse than no spy at all. */
+        const end =
+          window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 1;
+        if (end) return spied[spied.length - 1].section;
+
+        /* Otherwise: the last section that has passed the line, and the first
+           one until any has. +1 absorbs the sub-pixel scroll positions a
+           trackpad and a zoomed page both produce. Read once, outside the
+           loop — `getComputedStyle` is a style read and five of them a frame
+           for one unchanging answer would be five too many. */
+        const at = line() + 1;
+        let current = spied[0].section;
+        for (const { section } of spied) {
+          if (section.getBoundingClientRect().top <= at) current = section;
+        }
+        return current;
+      };
+
+      const update = (): void => {
+        const section = activeSection();
+        const marked = spied.find(({ link }) => link.getAttribute('aria-current') === 'page');
+        /* Nothing to do on the scrolls that don't change the answer, which is
+           nearly all of them — so no style is invalidated per frame, only the
+           handful of rect reads above. */
+        if (marked && marked.section === section) return;
+
+        for (const pair of spied) {
+          if (pair.section === section) pair.link.setAttribute('aria-current', 'page');
+          else pair.link.removeAttribute('aria-current');
+        }
+      };
+
+      /* IntersectionObserver was the other candidate and isn't used: "the top
+         edge crossed a line 56px down" has to be spelled as a rootMargin band,
+         and it still can't answer the end-of-document case above — so the
+         scroll path would be needed anyway, beside the observer. Five rect
+         reads at most once a frame is the smaller thing to keep true.
+
+         Once per frame, the same way the typing loop coalesces its resize. */
+      let queued = false;
+      const schedule = (): void => {
+        if (queued) return;
+        queued = true;
+        window.requestAnimationFrame(() => {
+          queued = false;
+          update();
+        });
+      };
+
+      window.addEventListener('scroll', schedule, { passive: true });
+      window.addEventListener('resize', schedule);
+
+      /* The answer can also change with the page standing still: a badge
+         image arriving or a font swapping moves every section below it, and
+         neither fires a scroll event. Measured — deep-linking /#contact while
+         the certification art was still loading left the mark a section
+         behind and nothing ever corrected it. Watching the document's own box
+         covers all of those at once, and routes through the same coalescer. */
+      new ResizeObserver(schedule).observe(document.documentElement);
+
+      /* Once now, so the first answer doesn't wait a frame. This is also what
+         corrects a deep link like /#projects, which the server rendered as
+         About. */
+      update();
+    }
+  }
+</script>
