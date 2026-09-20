@@ -1,0 +1,42 @@
+---
+/**
+ * A copy string, with any `[[REDACTED: label]]` markers drawn as bars.
+ *
+ * Not a design-system component — the system has none, and CLAUDE.md records
+ * the departure. Three things about how it works are deliberate:
+ *
+ * It takes the whole string, not one redaction, because a redaction sits
+ * mid-sentence and a bar-only component couldn't compose into running text.
+ *
+ * The bar is an **empty** element. It carries no text at all, so there is no
+ * transparent-on-solid run for a contrast audit to flag, and no reliance on
+ * `█` (U+2588), which is outside the Latin subset we ship — it would fall back
+ * to the system stack the way the `→` in "Repo →" already does, at an
+ * unpredictable width. `.redacted` paints the box in CSS instead.
+ *
+ * Most importantly, there is nothing underneath it. A bar painted over real
+ * text is theatre: the name would still sit in view-source, in copy-paste and
+ * in the built HTML. brand-system.md §15 already states the principle for
+ * screenshots — redact the source, not the presentation — and it holds here.
+ * What a screen reader announces is the marker's own label, which names the
+ * kind of thing removed and never the thing itself.
+ */
+import { parseRedactions } from '../content/profile';
+
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const segments = parseRedactions(text);
+---
+
+{
+  segments.map((segment) =>
+    'redacted' in segment ? (
+      <span class="redacted" role="img" aria-label={`${segment.redacted} withheld`} />
+    ) : (
+      segment.text
+    ),
+  )
+}

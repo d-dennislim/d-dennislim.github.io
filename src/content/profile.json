@@ -57,7 +57,9 @@
   "sections": {
     "experienceTitle": "Where I've built",
     "certificationsTitle": "Yes, all of them, and more",
-    "projectsTitle": "What I've shipped"
+    "projectsTitle": "What I've shipped",
+    "clientNote": "Client engagement — the architecture is discussable, the code and the client are not.",
+    "clientAskLabel": "Ask me about it →"
   },
   "experience": [
     {
@@ -173,45 +175,33 @@
   "projects": [
     {
       "featured": true,
-      "eyebrow": "[[FILL: featured card eyebrow, e.g. 'Featured' or 'Latest']]",
-      "title": "[[FILL: featured project name]]",
-      "description": "[[FILL: featured project — one sentence on what it does and who for. Stack goes in tags, not here.]]",
+      "eyebrow": "Featured",
+      "provenance": "client",
+      "title": "[[REDACTED: hospital]] — centralised networking & firewall",
+      "meta": "Healthcare · Malaysia · 2026",
+      "description": "Multi-account, Transit Gateway, Network Firewall, WAF combined to serve healthcare",
       "tags": [
-        "[[FILL: featured project tag 1]]",
-        "[[FILL: featured project tag 2]]",
-        "[[FILL: featured project tag 3]]"
-      ],
-      "links": [
-        {
-          "label": "Repo →",
-          "href": "[[FILL: featured project repo URL — must resolve and have a README]]"
-        },
-        {
-          "label": "Write-up →",
-          "href": "[[FILL: featured project write-up URL, or delete this link]]"
-        }
+        "Healthcare",
+        "Migration",
+        "Security"
       ]
     },
     {
-      "title": "[[FILL: project 2 name]]",
-      "description": "[[FILL: project 2 — one sentence on what it does and who for]]",
+      "provenance": "client",
+      "title": "[[REDACTED: retail]] — generative AI automated document processing",
+      "meta": "Retail · Singapore · 2026",
+      "description": "Bedrock, AgentCore, Guardrail combined to serve explainable AI",
       "tags": [
-        "[[FILL: project 2 tag 1]]",
-        "[[FILL: project 2 tag 2]]"
-      ],
-      "links": [
-        {
-          "label": "Repo →",
-          "href": "[[FILL: project 2 repo URL]]"
-        }
+        "Generative AI",
+        "Automation"
       ]
     },
     {
-      "title": "[[FILL: project 3 name]]",
-      "description": "[[FILL: project 3 — one sentence on what it does and who for]]",
+      "title": "self-host observability stack",
+      "description": "Prometheus and Grafana combined to deliver real-time infrastructure monitoring, dashboards, and alerting",
       "tags": [
-        "[[FILL: project 3 tag 1]]",
-        "[[FILL: project 3 tag 2]]"
+        "Observability",
+        "Monitoring"
       ],
       "links": [
         {

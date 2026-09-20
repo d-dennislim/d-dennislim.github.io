@@ -1,0 +1,25 @@
+---
+/** The `.project-links` row from ProjectCard's preview, lifted so the featured
+ *  and plain branches of the card don't repeat it — the same reason TagRow
+ *  exists. An `unavailable` link renders as non-navigable text rather than an
+ *  anchor pointing at a placeholder, matching what Button does with one. */
+import type { Link } from '../types/profile';
+
+interface Props {
+  links: Link[];
+}
+
+const { links } = Astro.props;
+---
+
+<div class="project-links">
+  {
+    links.map((link) =>
+      link.unavailable ? (
+        <span aria-disabled="true">{link.label}</span>
+      ) : (
+        <a href={link.href}>{link.label}</a>
+      ),
+    )
+  }
+</div>

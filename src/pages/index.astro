@@ -19,7 +19,13 @@ import Certifications from '../components/Certifications.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import Footer from '../components/Footer.astro';
-import { profile, resolveActions, channelHref, emailAddress } from '../content/profile';
+import {
+  profile,
+  resolveActions,
+  resolveProjects,
+  channelHref,
+  emailAddress,
+} from '../content/profile';
 
 /* The five sections, in IA order. The `NN / 05` index shown beside a section
    heading is derived from this list, never authored — and every one of the
@@ -43,11 +49,34 @@ const pad = (n: number): string => String(n).padStart(2, '0');
 const indexOf = (id: string): string =>
   `${pad(sections.findIndex((section) => section.id === id) + 1)} / ${pad(sections.length)}`;
 
-const featured = profile.projects.filter((project) => project.featured);
+const projects = resolveProjects();
+
+const featured = projects.filter((project) => project.featured);
 if (featured.length > 1) {
   throw new Error(
     `index: ${featured.length} featured projects. Exactly one may be featured — more than one and nothing reads as "the" featured project.`,
   );
+}
+
+/* ProjectCard's README says not to feature a project with no working link.
+   This page departs from that — for a consulting engineer the strongest
+   evidence is the client work with no repo to open, and burying it under a
+   personal side project would be a worse page. CLAUDE.md records the
+   departure.
+
+   What the departure keeps is the reason behind the rule: a featured tile
+   whose call to action goes nowhere reads as an unfinished portfolio. So the
+   narrower rule enforced here is that the featured card must offer either a
+   route the reader can take or a stated reason there isn't one. Checked at
+   build time because a rule in a README is a rule someone eventually
+   forgets. */
+for (const project of featured) {
+  const route = project.links.some((link) => !link.unavailable);
+  if (!route && !project.note) {
+    throw new Error(
+      `index: the featured project ("${project.title}") offers neither a working link nor a note saying why there isn't one. A featured tile that leads nowhere and doesn't say why reads as an unfinished portfolio — give it a link, or mark it "provenance": "client" so it states its reason.`,
+    );
+  }
 }
 ---
 
@@ -115,7 +144,7 @@ if (featured.length > 1) {
           <span class="label section-index">{indexOf('projects')}</span>
         </div>
         <div class="project-grid">
-          {profile.projects.map((project) => <ProjectCard {...project} headingLevel={3} />)}
+          {projects.map((project) => <ProjectCard {...project} headingLevel={3} />)}
         </div>
       </div>
     </section>

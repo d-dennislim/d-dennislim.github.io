@@ -118,15 +118,74 @@ export interface JacketCertification extends Certification {
   verifyUrl?: never;
 }
 
+/**
+ * Where a project came from.
+ *
+ * `client` work has no public artifacts — no repo to open, no write-up to
+ * read — so the card states why instead of leaving the reader to guess
+ * between "under NDA" and "portfolio unfinished". Absent means `personal`.
+ */
+export type ProjectProvenance = 'client' | 'personal';
+
 export interface Project {
+  /**
+   * Copy strings on a project may carry inline `[[REDACTED: label]]` markers,
+   * which render as a bar. Unlike `[[FILL: ...]]`, a redaction is *finished*
+   * copy: the client's name is absent from the source because it was never
+   * written here, not because someone has yet to type it. See CLAUDE.md.
+   */
   title: string;
+  /**
+   * The generalised sector/period line under the title, e.g. the industry and
+   * the year. brand-system.md §7 and §26: generalised is honest, fabricated is
+   * not. Optional — omit the field rather than carry an empty one.
+   */
+  meta?: string;
   description: string;
   tags: string[];
-  links: Link[];
+  /**
+   * Optional: a client engagement has no repo and no write-up. Left off, a
+   * client project is given the "ask me" route by resolveProjects instead.
+   */
+  links?: Link[];
+  /** Absent means `personal`. */
+  provenance?: ProjectProvenance;
+  /**
+   * Why this particular engagement isn't public, when the reason is worth
+   * stating more precisely than the default in `sections.clientNote`.
+   */
+  note?: string;
   /** Exactly one project may be featured (ProjectCard README). */
   featured?: boolean;
   /** Only on the featured card, e.g. "Featured" or "Latest". */
   eyebrow?: string;
+}
+
+/**
+ * One run of a copy string that may contain `[[REDACTED: label]]` markers.
+ *
+ * A redaction appears *mid-string* — "[[REDACTED: client]] — centralised
+ * networking" — so a component that rendered a bar on its own couldn't
+ * compose. `parseRedactions` turns the string into these segments and
+ * RedactedText walks them in order.
+ *
+ * The label is what a screen reader announces. It is never the redacted value:
+ * "client name" is the label, the client's actual name is nowhere in this
+ * codebase.
+ */
+export type CopySegment = { text: string } | { redacted: string };
+
+/**
+ * A project as a component receives it, after resolveProjects.
+ *
+ * `provenance` and `links` stop being optional here: the default and the
+ * stand-in route are decided once, in the resolver, so no component has to
+ * carry a fallback and none can disagree with another about what a client
+ * project without links should offer.
+ */
+export interface ResolvedProject extends Omit<Project, 'links' | 'provenance'> {
+  provenance: ProjectProvenance;
+  links: Link[];
 }
 
 export interface Profile {
@@ -159,6 +218,18 @@ export interface Profile {
     experienceTitle: string;
     certificationsTitle: string;
     projectsTitle: string;
+    /**
+     * The default line a client project shows where its links would be. Copy,
+     * so it lives here rather than in markup like every other string on the
+     * page; a project that needs a different reason overrides it with `note`.
+     */
+    clientNote: string;
+    /**
+     * The label on the route a client project offers instead of a repo link.
+     * Copy, for the same reason as `clientNote` — and the destination is the
+     * stored `email` channel, so the address itself is still held once.
+     */
+    clientAskLabel: string;
   };
   experience: ExperienceRole[];
   certifications: {

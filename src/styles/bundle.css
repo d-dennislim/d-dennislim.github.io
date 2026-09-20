@@ -1075,3 +1075,84 @@ html { scroll-padding-top: var(--anchor-offset); }
   .navbar { position: static; }
   html { scroll-padding-top: 0; }
 }
+
+/* Redaction — a client name this page can't print.
+
+   The design system has no component for one; CLAUDE.md records the
+   departure. Three choices here are deliberate, and each rules out the
+   obvious alternative.
+
+   The box is **empty**. It is not a bar painted over real text: that would be
+   theatre, because the name would still sit in view-source, in copy-paste and
+   in the built HTML. brand-system.md §15 already states the principle for
+   screenshots — redact the source, not the presentation — and it holds for
+   copy too. The name is absent from profile.json, so there is nothing here to
+   uncover. Being empty also means no `color: transparent` run for a contrast
+   audit to flag, against the Lighthouse ≥ 95 budget.
+
+   It is drawn, not typed. `█` (U+2588) is outside the Latin subset we ship,
+   so a run of them would fall back to the system stack the way the `→` in
+   "Repo →" already does (see fonts.css) — at a width and height we don't
+   control, with hairline seams between glyphs on some platforms.
+
+   Its width is a character measure, not a length. `6ch` follows the `56ch` /
+   `44ch` / `34ch` measures the design system already uses, and being relative
+   it stays proportional across the three type sizes a redaction appears in —
+   the h2 title, the mono meta line, the body description. A bar matched to
+   the real name's length would leak the length; a fixed one leaks nothing.
+
+   As a graphical object carrying meaning it needs 3:1 (hard rule 3); `--ink`
+   is the body text colour, so it clears that in both modes with room to
+   spare. */
+
+.redacted {
+  display: inline-block;
+  width: 6ch;
+  height: 1em;
+  vertical-align: text-bottom;
+  background: var(--ink);
+  border-radius: var(--radius-sm);
+}
+
+/* Windows High Contrast substitutes its own palette for author colours, and
+   `--ink` resolves to nothing there — the bar would disappear and the
+   sentence would read with a gap where a word should be. */
+@media (forced-colors: active) {
+  .redacted { forced-color-adjust: none; background: CanvasText; }
+}
+
+/* Projects: the client-work additions ---------------------------------------
+
+   `.project-meta` is the generalised sector/period line under a title
+   (brand-system.md §7 — "a retail client", "a regulated financial services
+   client"). In the plain card the card's own space-3 gap spaces it; the
+   featured card is a grid whose inner column stacks on margins instead, so it
+   takes the same space-1 the title does there.
+
+   `.project-note` says why a client card has no repo. It takes `margin-top:
+   auto` so it, and not `.project-links`, absorbs the card's free space: the
+   note and the route it explains then sit together at the foot of the tile
+   instead of the note floating under the tags with the links stranded below
+   it. `.project-links` keeps its own auto from the design system and simply
+   finds nothing left to take. */
+
+.project-meta { margin: 0; color: var(--ink-muted); }
+.project-card.featured .project-meta { margin-top: var(--space-1); }
+
+.project-note { margin: 0; margin-top: auto; color: var(--ink-muted); }
+.project-aside .project-note { margin-top: 0; }
+
+/* An unavailable route — the email channel is still a placeholder — renders as
+   text, not an anchor, so it needs the row's own sizing without its colour
+   change or its hover. Matches what Button does with an unavailable action. */
+.project-links span[aria-disabled="true"] {
+  display: inline-flex; align-items: center; min-height: 44px;
+  color: var(--ink-muted); font-size: 14px; opacity: var(--opacity-disabled);
+}
+
+@media print {
+  /* Backgrounds are dropped by default, which would leave the bar invisible
+     and the sentence reading with a hole in it. There is nothing underneath
+     to expose — the name was never in the document. */
+  .redacted { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
