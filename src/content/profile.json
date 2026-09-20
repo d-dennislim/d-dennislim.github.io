@@ -8,6 +8,13 @@
     "role": "AWS Solutions Architect & Cloud Engineer",
     "bio": "I design and build scalable, secure cloud infrastructure on AWS.",
     "promptMark": "dennislim@cloud:~$",
+    "promptCommands": [
+      "terraform apply",
+      "cdk diff",
+      "cdk synth",
+      "cdk deploy",
+      "aws sts get-caller-identity"
+    ],
     "status": {
       "label": "Open to new engagements",
       "tone": "success"

@@ -141,6 +141,13 @@ export interface Profile {
     bio: string;
     /** The navbar's terminal-prompt mark. Short, keeps the `$`. */
     promptMark: string;
+    /**
+     * Commands the navbar prompt cycles after the `$` — typed, held, erased,
+     * next. The first is what a no-JS or reduced-motion visitor sees, standing
+     * still. Max 32 characters each, past which the bar clips them on most
+     * screens.
+     */
+    promptCommands: string[];
     status: Status;
   };
   channels: Channels;

@@ -548,7 +548,7 @@ button.tag[aria-pressed="true"] { background: var(--brand); border-color: var(--
 
    Everything above this line is a verbatim copy of
    design-system/components/bundle.css. Everything below exists only because a
-   real page needs two things the preview frame didn't:
+   real page needs three things the preview frame didn't:
 
    1. A document shell. The design system styles `.ds-canvas`, a wrapper the
       preview frame supplies; here <body> carries that class, so html needs the
@@ -556,9 +556,11 @@ button.tag[aria-pressed="true"] { background: var(--brand); border-color: var(--
    2. A theme toggle. CLAUDE.md requires one; the design system has no
       component for it. Styled from tokens only, following §16 Iconography:
       outlined glyph, 1.5px stroke, ink-muted at rest, brand on hover.
+   3. A navbar prompt that types a command. Explained in full at its own rule
+      further down, along with why it is a departure from §19 Motion.
 
-   If either of these ever earns a place in the design system, move it there
-   and delete it here.
+   If any of these ever earns a place in the design system, move it there and
+   delete it here.
    ========================================================================== */
 
 html {
@@ -569,7 +571,11 @@ body {
   margin: 0;
 }
 
-.theme-toggle {
+/* Two site-added icon buttons: the theme toggle and the typing pause. The
+   design system has no icon-button component, so §16 Iconography is followed
+   here once and both buttons share it. */
+.theme-toggle,
+.prompt-pause {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -584,10 +590,12 @@ body {
   transition: color var(--duration-fast) var(--ease-standard),
               border-color var(--duration-fast) var(--ease-standard);
 }
-.theme-toggle:hover { color: var(--brand); border-color: var(--border-strong); }
+.theme-toggle:hover,
+.prompt-pause:hover { color: var(--brand); border-color: var(--border-strong); }
 /* §16 sizes a standalone glyph at 24px, which is space-6 on the scale — the
    token is used rather than a literal so the value stays in one place. */
-.theme-toggle svg { display: block; width: var(--space-6); height: var(--space-6); }
+.theme-toggle svg,
+.prompt-pause svg { display: block; width: var(--space-6); height: var(--space-6); }
 
 /* Which glyph shows is decided here, not in JS, off the same resolved-theme
    pair tokens.css uses — so the button is correct at first paint and with
@@ -601,11 +609,13 @@ body {
 :root[data-theme="dark"] .theme-toggle [data-theme-icon="moon"] { display: none; }
 :root[data-theme="dark"] .theme-toggle [data-theme-icon="sun"] { display: block; }
 
-/* The toggle sits beside the nav links, not inside the list. */
+/* The controls sit beside the nav links, not inside the list — neither is a
+   section link and neither should be announced as one. */
 .navbar-end { display: flex; align-items: center; gap: var(--space-6); }
 
 @media print {
-  .theme-toggle { display: none; }
+  .theme-toggle,
+  .prompt-pause { display: none; }
 }
 
 /* The component previews carry a handful of one-off inline styles
@@ -666,6 +676,121 @@ body {
   .navbar { padding: var(--space-3) var(--space-4); }
   .navbar-links { gap: var(--space-4); }
 }
+
+/* Prompt typing — the command the navbar mark types after the `$`.
+
+   Structure. The design system makes `.navbar-mark` the link, with the cursor
+   inside it. A typed command has to sit *between* the `$` and the cursor, so
+   here `.navbar-mark` is the wrapper and the link is `.navbar-mark-link`
+   inside it. Nothing about the design system's own rule changes: the cursor is
+   still a descendant of `.navbar-mark`, so `.navbar-mark .prompt-cursor` keeps
+   matching and its sizes are not restated anywhere below.
+
+   Why the command is out of flow. It must not enter the bar's layout at all.
+   Flexbox breaks lines *before* it shrinks anything, and the line break is
+   decided on `.navbar-mark`'s max-content width — which counts the command
+   even when the inner box is `flex-basis: 0`. Both were measured: with the
+   command in flow, the links dropped to a second row at 721px, a width where
+   they sit on one row without it. So `.navbar-typed` is an empty, growing box
+   that takes whatever room is left beside the links, and `.navbar-typed-run`
+   is positioned inside it, out of flow, contributing nothing. What the bar
+   measures is then the prompt and the gap — what it measured before this
+   feature existed.
+
+   That also settles CLS. The box is sized by the space left over at that
+   viewport, never by what is typed into it, so a character appearing cannot
+   move anything. The command clips on the right when there isn't room, which
+   is what a terminal narrower than its command does anyway.
+
+   Motion. This is a departure from brand-system §19 ("nothing animates on
+   load"), decided rather than overlooked — see CLAUDE.md. It cycles, so it is
+   auto-updating content running past five seconds, and WCAG 2.2.2 requires a
+   mechanism to stop it: that is `.prompt-pause`, styled with the theme toggle
+   further up. The loop and the button ship together or neither ships. */
+
+.navbar-mark { flex: 1 1 auto; min-width: 0; }
+
+/* The mark is the identity: it never gives up room and never breaks across
+   lines. The command is the only thing here that yields. */
+.navbar-mark-link { flex-shrink: 0; white-space: nowrap; text-decoration: none; }
+
+.navbar-typed {
+  position: relative;
+  align-self: stretch;  /* the run is clipped to this box, so it needs height */
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  /* A hard cut mid-glyph reads as an overflow bug; a fade reads as a terminal
+     running out of room. The black is an alpha ramp, not a paint — the mask
+     uses no colour from the page. With room to spare the fade lands on empty
+     box and costs nothing, because the command is left-aligned in it. */
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--space-8)), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - var(--space-8)), transparent);
+}
+.navbar-typed-run {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+}
+
+/* Hidden until the script types it, so the rendered command is never seen
+   being swapped for the one this load picked. It shows without the script
+   (`scripting: none`, where the rendered command is the whole truth) and under
+   reduced motion (the joke lands, nothing moves). `visibility`, not `display`:
+   the cursor's position must not jump when the first character lands. */
+.navbar-typed-text { white-space: nowrap; visibility: hidden; }
+
+/* Published for the script: whether a command is on screen to animate. The
+   breakpoint below switches it off, so the number stays in this file and the
+   script reads the answer instead of repeating the question. */
+.navbar-typed-text { --typing: on; }
+.navbar-typed-text[data-typing] { visibility: visible; }
+@media (scripting: none) { .navbar-typed-text { visibility: visible; } }
+@media (prefers-reduced-motion: reduce) { .navbar-typed-text { visibility: visible; } }
+
+/* Where the feature stops. The command and its pause button go together —
+   a loop with no way to stop it is the conformance failure WCAG 2.2.2 names,
+   so neither may be hidden without the other.
+
+   780px is not chosen for the command, which would survive much narrower; it
+   is set by the button's 44px plus its gap, which at some width pushes the
+   five links onto a second row — and a second row makes the bar 106px where
+   the anchor offset above assumes 70px. Measured with the button at the head
+   of the bar, the links hold one row down to 773px. The cut is at 780 rather
+   than 773 for two reasons: it is the breakpoint the design system already
+   collapses the hero at, so it is not a new number, and the step itself is
+   set by the pixel width of five link labels, so a few pixels of slack is
+   what keeps a rename from silently breaking the bar.
+
+   The cursor stays below it, so the mark is character-for-character what it is
+   without this feature: prompt, gap, cursor. */
+@media (max-width: 780px) {
+  .navbar-typed-text { display: none; --typing: off; }
+  .prompt-pause { display: none; }
+}
+
+/* The pause control. It sits at the head of the bar, to the left of the
+   prompt it governs — beside the nav links it read as a sixth link with no
+   stated subject.
+
+   It means nothing until something is moving, so it is invisible until the
+   script says so — and it holds its 44px from first paint, so revealing it
+   shifts nothing. Without a script there is no loop and no button; under
+   reduced motion the command sits still and there is nothing to pause, so the
+   script never reveals it. */
+.prompt-pause { visibility: hidden; }
+.prompt-pause[data-ready] { visibility: visible; }
+@media (scripting: none) { .prompt-pause { display: none; } }
+
+/* The button shows what pressing it will do, the way the theme toggle does. */
+.prompt-pause [data-pause-icon="play"] { display: none; }
+.prompt-pause[aria-pressed="true"] [data-pause-icon="pause"] { display: none; }
+.prompt-pause[aria-pressed="true"] [data-pause-icon="play"] { display: block; }
 
 /* Certification shelf: hexagonal badges in a labelled row per AWS tier.
 

@@ -8,28 +8,123 @@
  *
  * The theme toggle sits beside the list rather than inside it — it isn't a
  * section link and shouldn't be announced as one.
+ *
+ * The mark cycles `commands` after the `$` — types one, holds it, erases it,
+ * moves to the next. Because that keeps moving indefinitely, WCAG 2.2.2
+ * requires a way to stop it, which is what the pause button beside the theme
+ * toggle is; it is not decoration and must not be dropped. See the "Prompt
+ * typing" entry in CLAUDE.md for that and for why `.navbar-mark` is a wrapper
+ * here when the design system makes it the link itself.
  */
 import ThemeToggle from './ThemeToggle.astro';
 import type { Link } from '../types/profile';
 
 interface Props {
   promptMark: string;
+  /** Cycled after the mark, one at a time. Empty renders the bare prompt. */
+  commands?: string[];
   links: Link[];
   /** href of the section to mark current. */
   currentHref?: string;
 }
 
-const { promptMark, links, currentHref } = Astro.props;
+const { promptMark, commands = [], links, currentHref } = Astro.props;
 
 if (links.length > 5) {
   throw new Error(
     `NavBar: ${links.length} links. The design system caps this at 5 — a one-page portfolio has 3–4 sections at most.`,
   );
 }
+
+/* The typed box takes the room left over beside the links and clips what
+   doesn't fit, so a long command costs nothing but its own legibility. The cap
+   is where it stops being legible: 32 characters still fits a 1024px bar. */
+const MAX_COMMAND_COLS = 32;
+const tooLong = commands.find((command) => command.length > MAX_COMMAND_COLS);
+if (tooLong) {
+  throw new Error(
+    `NavBar: prompt command "${tooLong}" is ${tooLong.length} characters. The cap is ${MAX_COMMAND_COLS} — past that the bar clips it on most screens.`,
+  );
+}
 ---
 
 <nav class="navbar" aria-label="Sections">
-  <a class="navbar-mark" href="#top">{promptMark}<span class="prompt-cursor"></span></a>
+  {
+    commands.length > 0 && (
+      /* WCAG 2.2.2: content that moves on its own for more than five seconds
+         needs a mechanism to stop it, and cycling commands never stop.
+
+         It sits to the left of the prompt rather than with the nav links, so
+         it reads as the terminal's own control instead of a sixth section
+         link — and a keyboard user meets the stop before the motion it
+         governs. It follows §16 Iconography like the theme toggle and shares
+         its rule in bundle.css. Rendered here rather than created by the
+         script, so its 44px is held from first paint and revealing it shifts
+         nothing; it stays invisible until the script confirms something is
+         actually moving. */
+      <button
+        class="prompt-pause"
+        type="button"
+        id="prompt-pause"
+        aria-pressed="false"
+        aria-label="Pause typing"
+        title="Pause typing"
+      >
+        <svg
+          data-pause-icon="pause"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <rect x="8" y="5" width="3" height="14" rx="1.5" />
+          <rect x="14" y="5" width="3" height="14" rx="1.5" />
+        </svg>
+
+        <svg
+          data-pause-icon="play"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M8.5 5.5 18 12l-9.5 6.5Z" />
+        </svg>
+      </button>
+    )
+  }
+  <span class="navbar-mark">
+    <a class="navbar-mark-link" href="#top">{promptMark}</a>
+    {
+      commands.length > 0 && (
+        /* Decoration, so it's hidden from assistive tech — which also keeps the
+           link's accessible name at the mark alone while the text underneath
+           changes, and keeps a screen reader from narrating a string that
+           rewrites itself every few seconds. The first command is rendered
+           server-side: it is what shows with JavaScript off or reduced motion
+           on, and CSS keeps it invisible until the script starts, so no
+           command is ever seen being replaced. */
+        <span class="navbar-typed" aria-hidden="true">
+          <span class="navbar-typed-run">
+            <span
+              class="navbar-typed-text"
+              data-prompt-commands={JSON.stringify(commands)}
+            >{commands[0]}</span>
+            <span class="prompt-cursor" />
+          </span>
+        </span>
+      )
+    }
+    {commands.length === 0 && <span class="prompt-cursor" aria-hidden="true" />}
+  </span>
   <div class="navbar-end">
     <ul class="navbar-links">
       {
@@ -45,3 +140,165 @@ if (links.length > 5) {
     <ThemeToggle />
   </div>
 </nav>
+
+<script>
+  /**
+   * The prompt typing: type a command, hold it, erase it, move to the next,
+   * round and round.
+   *
+   * Because it never stops on its own, WCAG 2.2.2 requires a mechanism that
+   * stops it — the pause button in the bar. That button is part of the
+   * feature, not a nicety: without it this loop is a conformance failure.
+   *
+   * It also holds still whenever motion would be pointless or unwelcome: under
+   * `prefers-reduced-motion`, in a background tab, and below the breakpoint
+   * where the command isn't rendered at all. The breakpoint is not repeated
+   * here — bundle.css publishes it as `--typing`, so the number lives in one
+   * place and this reads the answer.
+   */
+
+  /* A typing cadence isn't expressible in the motion scale — that scale covers
+     colour, border, transform and shadow transitions, not a per-character
+     interval. Named here for the same reason bundle.css declares the scale at
+     its head: the value has one home. */
+  const LEAD_MS = 400; /* let the bar settle before the first character */
+  const CHAR_MS = 45; /* typing */
+  const ERASE_MS = 25; /* erasing, quicker than typing, as a shell's own backspace is */
+  const HOLD_MS = 2200; /* the finished command left standing to be read */
+  const GAP_MS = 400; /* empty prompt between commands */
+
+  const typed = document.querySelector<HTMLElement>('[data-prompt-commands]');
+  const pauseButton = document.getElementById('prompt-pause');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (typed) {
+    let commands: string[] = [];
+    try {
+      commands = JSON.parse(typed.dataset.promptCommands ?? '[]');
+    } catch {
+      /* Malformed data: leave the server-rendered command alone. */
+    }
+
+    if (commands.length > 0) {
+      /* Where the cycle starts, so two visits don't open on the same command. */
+      let index = Math.floor(Math.random() * commands.length);
+      let shown = 0;
+      let erasing = false;
+      let paused = false;
+      let timer = 0;
+
+      /* bundle.css sets this to `off` below the breakpoint, where the command
+         is not rendered and there is nothing to animate. */
+      const rendered = (): boolean =>
+        getComputedStyle(typed).getPropertyValue('--typing').trim() === 'on';
+
+      const moving = (): boolean =>
+        !paused && !reduced.matches && !document.hidden && rendered();
+
+      const paint = (): void => {
+        typed.textContent = commands[index].slice(0, shown);
+      };
+
+      const step = (): void => {
+        timer = 0;
+        const command = commands[index];
+
+        if (!erasing) {
+          shown += 1;
+          paint();
+          if (shown < command.length) return schedule(CHAR_MS);
+          erasing = true;
+          return schedule(HOLD_MS);
+        }
+
+        shown -= 1;
+        paint();
+        if (shown > 0) return schedule(ERASE_MS);
+        erasing = false;
+        index = (index + 1) % commands.length;
+        schedule(GAP_MS);
+      };
+
+      const schedule = (ms: number): void => {
+        if (moving()) timer = window.setTimeout(step, ms);
+      };
+
+      /* The one place the loop starts or stops. Everything that can change the
+         answer — the button, the tab, the preference, the viewport — calls it. */
+      const sync = (): void => {
+        if (moving()) {
+          if (!timer) schedule(CHAR_MS);
+          return;
+        }
+        if (timer) {
+          window.clearTimeout(timer);
+          timer = 0;
+        }
+      };
+
+      if (pauseButton) {
+        const renderButton = (): void => {
+          const label = paused ? 'Resume typing' : 'Pause typing';
+          pauseButton.setAttribute('aria-pressed', String(paused));
+          pauseButton.setAttribute('aria-label', label);
+          /* Same words in the tooltip: the glyph alone doesn't say what it
+             governs, and this is the one control here whose subject isn't
+             obvious from where it sits. */
+          pauseButton.setAttribute('title', label);
+        };
+
+        pauseButton.addEventListener('click', () => {
+          paused = !paused;
+          renderButton();
+          sync();
+        });
+
+        renderButton();
+      }
+
+      /* Nothing below here runs under reduced motion: the server-rendered
+         command is already on screen, revealed by CSS, and the button stays
+         invisible because there is nothing to pause. */
+      const start = (): void => {
+        if (reduced.matches) return;
+        typed.dataset.typing = 'on';
+        if (pauseButton) pauseButton.dataset.ready = 'on';
+        shown = 0;
+        erasing = false;
+        paint();
+        schedule(LEAD_MS);
+      };
+
+      reduced.addEventListener('change', () => {
+        if (!reduced.matches) {
+          start();
+          return;
+        }
+        /* Stop where it is and leave the whole command standing, so the prompt
+           doesn't freeze mid-word. */
+        sync();
+        shown = commands[index].length;
+        erasing = false;
+        paint();
+        delete typed.dataset.typing;
+        if (pauseButton) delete pauseButton.dataset.ready;
+      });
+
+      document.addEventListener('visibilitychange', sync);
+
+      /* Crossing the breakpoint changes whether the command is rendered at
+         all. Once per frame is plenty for a drag-resize. */
+      let queued = false;
+      window.addEventListener('resize', () => {
+        if (queued) return;
+        queued = true;
+        window.requestAnimationFrame(() => {
+          queued = false;
+          sync();
+        });
+      });
+
+      start();
+    }
+  }
+</script>
