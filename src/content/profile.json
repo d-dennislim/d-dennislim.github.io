@@ -24,7 +24,7 @@
     "email": "denniscz.lim@gmail.com",
     "github": "https://github.com/d-dennislim",
     "linkedin": "https://linkedin.com/in/d-dennislim",
-    "resume": "[[FILL: path to your résumé PDF, e.g. /resume.pdf — figures in it must match the site exactly]]"
+    "resume": "https://linkedin.com/in/d-dennislim"
   },
   "hero": {
     "actions": [
@@ -169,7 +169,7 @@
       "code": "AWS|GOLDEN|JACKET",
       "name": "AWS Golden Jacket, awarded for holding every active AWS certification",
       "art": "aws-golden-jacket-award-yellow",
-      "caption": "its more golden that you think"
+      "caption": "it's more golden that you think"
     }
   },
   "projects": [
@@ -206,13 +206,13 @@
       "links": [
         {
           "label": "Repo →",
-          "href": "[[FILL: project 3 repo URL]]"
+          "href": "https://github.com/d-dennislim"
         }
       ]
     }
   ],
   "contact": {
-    "heading": "Lets touch base",
+    "heading": "Let's touch base",
     "lead": "I reply within 1 working day.",
     "actions": [
       {
