@@ -159,6 +159,7 @@
     "jacket": {
       "code": "AWS|GOLDEN|JACKET",
       "name": "AWS Golden Jacket, awarded for holding every active AWS certification",
+      "art": "aws-golden-jacket-award-yellow",
       "caption": "its more golden that you think"
     }
   },
