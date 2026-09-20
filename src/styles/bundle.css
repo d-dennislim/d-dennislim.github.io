@@ -628,7 +628,6 @@ body {
    .status        margin:0 0 16px 0                -> .hero-status      (space-4)
    $ whoami span  color:var(--ink-muted)           -> .console-prompt
    section-head   .section-eyebrow margin-bottom:4px -> scoped rule     (space-1)
-   certs          .section-title margin-bottom:32px -> .section-title-spaced (space-8)
    featured card  .project-title margin-top:4px     -> scoped rule      (space-1)
    featured card  .project-desc  margin-top:8px     -> scoped rule      (space-2)
    featured card  gap:12px column                   -> .project-aside   (space-3)
@@ -640,7 +639,23 @@ body {
 
 .section-head .section-eyebrow { margin-bottom: var(--space-1); }
 
-.section-title-spaced { margin-bottom: var(--space-8); }
+/* An eyebrow-only head — About and Contact, whose big heading belongs to the
+   hero and the contact card rather than to the head row. The 4px above pushes
+   the eyebrow off its own baseline when there is no title under it to close
+   the gap, so a head that is only an eyebrow is exactly one line tall and
+   `.section-head`'s own space-8 does all the spacing. The child combinator is
+   the test: the three heads that do carry a title wrap it and the eyebrow in a
+   div, so their eyebrow is a grandchild and keeps the 4px. */
+.section-head > .section-eyebrow { margin-bottom: 0; }
+
+/* `.section-head` is `flex-wrap: wrap`, and `justify-content` stops applying
+   per-row once a row holds a single item: where the head's title is long
+   enough to take the full width — Certifications at 390px is the one that
+   does — the index dropped to a second row and sat hard left, 304px from the
+   edge it sits on in every other section. `margin-left: auto` right-aligns it
+   on whichever row it lands, and changes nothing while the head is one row,
+   where space-between had already put it there. */
+.section-index { margin-left: auto; }
 
 .project-card.featured .project-title { margin-top: var(--space-1); }
 .project-card.featured .project-desc { margin-top: var(--space-2); }

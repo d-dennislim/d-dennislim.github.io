@@ -2,10 +2,17 @@
 /**
  * Hero — design-system/components/Hero
  *
- * The About section: an asymmetric two-up. Left is identity — eyebrow, name in
+ * The About section: an asymmetric two-up. Left is identity — name in
  * `display` (the only place that size appears), role in `accent` rather than
  * `brand`, bio, status, links. Right is the `$ whoami` console panel, the one
  * place on the page allowed to read as a dashboard widget.
+ *
+ * The eyebrow sits above the two-up rather than inside its left column, in the
+ * same `.section-head` row every other section uses. That is what gives the
+ * section index somewhere to sit at the section's own right edge — inside
+ * `.hero-main` it would have aligned to the left column's edge, two-fifths
+ * short of where the other four sections put it. See the section-index entry
+ * in CLAUDE.md.
  */
 import Button from './Button.astro';
 import MetricRow from './MetricRow.astro';
@@ -13,6 +20,8 @@ import type { Link, Metric, Status } from '../types/profile';
 
 interface Props {
   eyebrow: string;
+  /** `NN / NN`, supplied by the page. Omitted, the head is just the eyebrow. */
+  index?: string;
   name: string;
   initials: string;
   role: string;
@@ -22,12 +31,16 @@ interface Props {
   metrics: Metric[];
 }
 
-const { eyebrow, name, initials, role, bio, status, links, metrics } = Astro.props;
+const { eyebrow, index, name, initials, role, bio, status, links, metrics } = Astro.props;
 ---
+
+<div class="section-head">
+  <p class="label section-eyebrow">{eyebrow}</p>
+  {index && <span class="label section-index">{index}</span>}
+</div>
 
 <div class="hero">
   <div class="hero-main">
-    <p class="label section-eyebrow">{eyebrow}</p>
     <h1 class="display hero-name">{name}</h1>
     <p class="body hero-role">{role}</p>
     <p class="body hero-bio">{bio}</p>

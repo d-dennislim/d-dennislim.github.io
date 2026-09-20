@@ -22,7 +22,10 @@ import Footer from '../components/Footer.astro';
 import { profile, resolveActions, channelHref, emailAddress } from '../content/profile';
 
 /* The five sections, in IA order. The `NN / 05` index shown beside a section
-   heading is derived from this list, never authored. */
+   heading is derived from this list, never authored — and every one of the
+   five carries it. The design system's own PortfolioPage preview only marks
+   two; see the section-index entry in CLAUDE.md for why this page marks all
+   of them. */
 const sections = [
   { id: 'about', label: 'About' },
   { id: 'experience', label: 'Experience' },
@@ -63,6 +66,7 @@ if (featured.length > 1) {
       <div class="section-inner">
         <Hero
           eyebrow="About"
+          index={indexOf('about')}
           name={profile.identity.name}
           initials={profile.identity.initials}
           role={profile.identity.role}
@@ -93,6 +97,7 @@ if (featured.length > 1) {
       <div class="section-inner">
         <Certifications
           eyebrow="Certifications"
+          index={indexOf('certifications')}
           title={profile.sections.certificationsTitle}
           items={profile.certifications.items}
           jacket={profile.certifications.jacket}
@@ -119,6 +124,7 @@ if (featured.length > 1) {
       <div class="section-inner">
         <ContactBlock
           eyebrow="Contact"
+          index={indexOf('contact')}
           heading={profile.contact.heading}
           lead={profile.contact.lead}
           emailLabel={emailAddress}

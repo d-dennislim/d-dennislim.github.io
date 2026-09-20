@@ -59,13 +59,15 @@ import type { CertTier, ShelfCertification, JacketCertification } from '../types
 
 interface Props {
   eyebrow: string;
+  /** `NN / NN`, supplied by the page. Omitted, the head is just eyebrow + title. */
+  index?: string;
   title: string;
   items: ShelfCertification[];
   jacket?: JacketCertification;
   headingLevel?: 2 | 3;
 }
 
-const { eyebrow, title, items, jacket, headingLevel = 2 } = Astro.props;
+const { eyebrow, index: sectionIndex, title, items, jacket, headingLevel = 2 } = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
 
 /* The tier rows head the shelf, so they sit one level under the section's own
@@ -105,8 +107,17 @@ const JACKET_H = 152;
 const JACKET_W = Math.round(JACKET_H * 0.866);
 ---
 
-<p class="label section-eyebrow">{eyebrow}</p>
-<Heading class="h1 section-title section-title-spaced">{title}</Heading>
+{/* `.section-head` rather than a bare eyebrow + title: it supplies the row the
+    section index sits in, and its own space-8 bottom margin is exactly what
+    `.section-title-spaced` used to add under the title, so the gap to the
+    shelf is unchanged. */}
+<div class="section-head">
+  <div>
+    <p class="label section-eyebrow">{eyebrow}</p>
+    <Heading class="h1 section-title">{title}</Heading>
+  </div>
+  {sectionIndex && <span class="label section-index">{sectionIndex}</span>}
+</div>
 
 <div class="cert-tiers">
   {

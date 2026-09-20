@@ -4,12 +4,20 @@
  *
  * The closing ask. One primary action plus the secondary routes, with the
  * address also shown as plain text — plenty of people won't click a `mailto:`.
+ *
+ * The eyebrow sits above the card in a `.section-head` rather than inside it,
+ * so the section index lands at the section's right edge like every other
+ * section's. Inside the card it would have aligned to the left column of the
+ * card's own grid, inset by the card's padding. See the section-index entry in
+ * CLAUDE.md.
  */
 import Button from './Button.astro';
 import type { Link } from '../types/profile';
 
 interface Props {
   eyebrow: string;
+  /** `NN / NN`, supplied by the page. Omitted, the head is just the eyebrow. */
+  index?: string;
   heading: string;
   lead: string;
   emailLabel: string;
@@ -18,14 +26,18 @@ interface Props {
   headingLevel?: 2 | 3;
 }
 
-const { eyebrow, heading, lead, emailLabel, emailHref, actions, headingLevel = 2 } =
+const { eyebrow, index, heading, lead, emailLabel, emailHref, actions, headingLevel = 2 } =
   Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
 ---
 
+<div class="section-head">
+  <p class="label section-eyebrow">{eyebrow}</p>
+  {index && <span class="label section-index">{index}</span>}
+</div>
+
 <div class="contact-block">
   <div>
-    <p class="label section-eyebrow">{eyebrow}</p>
     <Heading class="h1 contact-heading">{heading}</Heading>
     <p class="body contact-lead">{lead}</p>
     <p class="body-sm contact-direct">
