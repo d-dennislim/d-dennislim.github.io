@@ -72,6 +72,14 @@ const preloadedFonts = [
     <title>{title}</title>
     <meta name="description" content={description} />
     {canonical && <link rel="canonical" href={canonical} />}
+    {
+      profile.site.googleSiteVerification && (
+        <meta
+          name="google-site-verification"
+          content={profile.site.googleSiteVerification}
+        />
+      )
+    }
 
     {/*
       §10's icon set. The monogram behind all of these is drawn by

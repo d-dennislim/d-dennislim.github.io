@@ -215,6 +215,12 @@ export interface Profile {
      * canonical at all. Filling this one string switches all four on.
      */
     origin: string;
+    /**
+     * Google Search Console's HTML-tag verification token: the `content`
+     * value only, not the whole tag. Public by design, since Google reads it
+     * from the served page. Optional: the meta tag is omitted when unset.
+     */
+    googleSiteVerification?: string;
   };
   identity: {
     name: string;
