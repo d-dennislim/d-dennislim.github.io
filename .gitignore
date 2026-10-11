@@ -8,3 +8,14 @@ CLAUDE.md
 
 # build output
 public/badges/
+# scripts/build-brand-assets.mjs draws these from tokens.json + profile.json on
+# every prebuild, the same way public/badges/ is rendered from assets/badges/.
+public/favicon.svg
+public/favicon-96.png
+public/apple-touch-icon.png
+public/og.png
+public/site.webmanifest
+
+# Lighthouse traces, ~500 KB a run. The trend that matters is the one-line-per-
+# run table in doc/measures.md; these are the detail behind a row.
+reports/

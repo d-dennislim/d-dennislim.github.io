@@ -16,11 +16,42 @@ import '../styles/fonts.css';
 import '../styles/tokens.css';
 import '../styles/bundle.css';
 
+import { profile, absoluteUrl } from '../content/profile';
+import { personJsonLd } from '../content/seo';
+
 interface Props {
   title: string;
+  /**
+   * The meta description for this page (§22: 150-160 characters, one per
+   * page, never duplicated). Rendered verbatim, placeholder included — see
+   * `site.description` in types/profile.ts for why the marker is allowed to
+   * reach the build.
+   */
+  description: string;
+  /** This page's site-root path, for the self-referencing canonical. */
+  path: string;
+  /** §22's `og:type`. `profile` for the portfolio, `article` for a study. */
+  ogType?: string;
 }
 
-const { title } = Astro.props;
+const { title, description, path, ogType = 'profile' } = Astro.props;
+
+/*
+ * §22's absolute-URL group: canonical, `og:url`, `og:image`.
+ *
+ * All three are `null` until `site.origin` is filled, and a `null` here means
+ * the tag is not written at all. A relative canonical is not a canonical, a
+ * guessed host is the fake URL astro.config.mjs refuses, and `og:image` has to
+ * be absolute or no scraper will resolve it — LinkedIn least of all, and §22
+ * warns that its first fetch is the one that sticks.
+ *
+ * The rest of the head does not wait on the domain: description, `og:title`,
+ * `og:description`, `twitter:card`, the icons and the manifest are all correct
+ * today and all checkable by the pre-publish gate today.
+ */
+const canonical = absoluteUrl(path);
+const ogImage = absoluteUrl('/og.png');
+const jsonLd = personJsonLd();
 
 /* Preloaded: the faces used above the fold. Mono 400 (the `code` type style)
    is declared in fonts.css but nothing on this page uses it, so it is not
@@ -39,6 +70,51 @@ const preloadedFonts = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    {/*
+      §10's icon set. The monogram behind all of these is drawn by
+      scripts/build-brand-assets.mjs from tokens.json, so it cannot drift from
+      the brand colour the way a hand-exported PNG would. `favicon.svg` is
+      listed first and modern browsers prefer it; the 96px PNG is the fallback
+      and `apple-touch-icon` is fetched by name whether or not it is declared.
+    */}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-96.png" sizes="96x96" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    {/*
+      §22 social metadata. `og:image` carries its dimensions because LinkedIn
+      and Slack size the card from the tags before they have fetched the file,
+      and `og:image:alt` because a card is an image like any other (§15).
+    */}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={profile.identity.name} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {
+      ogImage && (
+        <>
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta
+            property="og:image:alt"
+            content={`${profile.identity.name} — ${profile.identity.role}`}
+          />
+        </>
+      )
+    }
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {
+      jsonLd && (
+        <script type="application/ld+json" set:html={jsonLd} is:inline />
+      )
+    }
 
     {
       preloadedFonts.map((href) => (
@@ -49,7 +125,7 @@ const preloadedFonts = [
     {/*
       Restore the saved mode before first paint.
 
-      This MUST be `is:inline`. A normal Astro <script> is bundled and deferred,
+      This MUST be `is:inline`. A normal Astro script block is bundled and deferred,
       so the page would paint in the OS mode and then jump to the saved one.
       With no saved choice we set nothing at all, which leaves the
       prefers-color-scheme rule in tokens.css in charge — that is the documented

@@ -113,4 +113,36 @@ export const resolveProjects = (): ResolvedProject[] =>
 /** The address as text, for the line in Contact that exists to be copied. */
 export const emailAddress = profile.channels.email;
 
+/**
+ * True once `site.origin` names a real host.
+ *
+ * Everything absolute on this site — the self-referencing canonical, `og:url`,
+ * `sitemap.xml`, the `Sitemap:` line in `robots.txt` — is gated on this rather
+ * than on a build flag, so there is exactly one place to change when the
+ * domain exists.
+ */
+export const hasOrigin = (): boolean => {
+  const origin = profile.site.origin;
+  return origin.length > 0 && !unfilled(origin);
+};
+
+/**
+ * An absolute URL for a site-root path, or `null` while there is no origin.
+ *
+ * `null` is the signal to omit the tag entirely. That is deliberate and it is
+ * what astro.config.mjs's unset `site` has always said: a canonical or an
+ * `og:url` pointing at a host we do not own is worse than none, and a relative
+ * canonical is not a canonical. Callers must handle `null` by writing nothing,
+ * never by falling back to a path.
+ *
+ * `unfilled` is reused rather than adding a second notion of "not set", so a
+ * `[[FILL` left in `origin` behaves the same as an empty one and still reaches
+ * §26's grep through the description.
+ */
+export const absoluteUrl = (path: string): string | null => {
+  if (!hasOrigin()) return null;
+  const origin = profile.site.origin.replace(/\/+$/, '');
+  return `${origin}${path.startsWith('/') ? path : `/${path}`}`;
+};
+
 export default profile;

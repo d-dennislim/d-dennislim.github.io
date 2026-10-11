@@ -4,18 +4,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prebuild": "node scripts/build-tokens.mjs && node scripts/sync-fonts.mjs && node scripts/build-badges.mjs",
-    "predev": "node scripts/build-tokens.mjs && node scripts/sync-fonts.mjs && node scripts/build-badges.mjs",
+    "prebuild": "node scripts/build-tokens.mjs && node scripts/sync-fonts.mjs && node scripts/build-badges.mjs && node scripts/build-brand-assets.mjs",
+    "predev": "node scripts/build-tokens.mjs && node scripts/sync-fonts.mjs && node scripts/build-badges.mjs && node scripts/build-brand-assets.mjs",
     "dev": "astro dev",
     "build": "astro build",
+    "postbuild": "node scripts/build-seo-files.mjs && node scripts/check-publish.mjs",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "audit": "node scripts/audit.mjs"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "@fontsource/ibm-plex-sans": "^5.3.0",
     "astro": "^7.3.3",
+    "lighthouse": "^13.5.0",
+    "satori": "^0.33.4",
     "sharp": "^0.35.4",
     "typescript": "^6.0.3"
   }

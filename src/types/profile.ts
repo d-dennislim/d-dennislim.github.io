@@ -191,6 +191,30 @@ export interface ResolvedProject extends Omit<Project, 'links' | 'provenance'> {
 export interface Profile {
   site: {
     title: string;
+    /**
+     * The site's meta description (brand-system.md §22): the §2 value
+     * proposition, 150-160 characters, one per page and never duplicated.
+     *
+     * Still a `[[FILL` marker, and rendered into the head as one on purpose.
+     * §2's value proposition is itself unwritten, `identity.bio` is hero copy
+     * and too short, and hard rule 1 forbids inventing the sentence. Emitting
+     * the marker puts it in `dist/`, where §26's pre-publish grep finds it and
+     * blocks the deploy until it is written — the same gate the case-study
+     * copy goes through, working as designed.
+     */
+    description: string;
+    /**
+     * The one origin every absolute URL on the site is built from — canonical,
+     * `og:url`, `sitemap.xml` and the `Sitemap:` line in `robots.txt`. Scheme
+     * and host, no trailing slash, one host only (§22: "pick `https://` and
+     * one host ... and 301 everything else to it").
+     *
+     * Empty until the domain exists, and empty is a working state, not a
+     * broken one: every absolute-URL feature is omitted rather than guessed,
+     * because a canonical pointing at a host you don't own is worse than no
+     * canonical at all. Filling this one string switches all four on.
+     */
+    origin: string;
   };
   identity: {
     name: string;
