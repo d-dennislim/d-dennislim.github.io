@@ -1,0 +1,19 @@
+{
+  "v": 3,
+  "layout": "files",
+  "createdOnFiles": { "v": 1, "at": "2026-09-19T03:44:22Z" },
+  "title": "Cloud Portfolio System",
+  "namespace": "CloudPortfolio",
+  "libraries": [],
+  "sections": {},
+  "groups": [],
+  "assetGroups": {},
+  "blobs": {},
+  "docs": { "readme": "project/README.md", "sections": [] },
+  "lastChange": {
+    "by": "Dennis",
+    "via": "Cowork",
+    "at": "2026-09-19T04:55:10Z",
+    "note": "Locked one identity in light and dark modes, replacing the three comparison directions. Added surface-sunken, border-strong, brand-hover, info, accent-aws, a 10-token diagram palette, and shadow/opacity/zIndex/layout families. Fixed 44px targets, token-based hover, off-scale rail dot, cert badge accessible names. Added MetricRow, ContactBlock, Testimonial, ArticleItem, DiagramFigure and CaseStudy; added states, motion, reduced-motion and print rules; regenerated the cover."
+  }
+}

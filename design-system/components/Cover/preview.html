@@ -1,0 +1,29 @@
+<!-- @dsCard height=320 -->
+<div class="ds-canvas" style="margin:0">
+  <svg viewBox="0 0 960 320" width="960" height="320" xmlns="http://www.w3.org/2000/svg">
+    <!--
+      blocks: brand×420w, accent×260w, ink-muted×160w, accent-aws×120w — one full-width band, 106px tall (a third of 320);
+        brand dominates because it is the single identity colour, accent-aws is smallest because the system rations it to certifications and AWS-managed diagram nodes
+      arrangement: top-band skeleton — "Cloud Portfolio" measures ~576px at 64px, past the 440px name zone, so the band goes full width above the name
+      pattern: dot grid, pitch = space-4 (16px), r = 1.5, cut from surface — the system pairs a mono face with a 4px scale and calls that its engineer signal, so the texture is a measured grid rather than anything organic
+      scales: band = a third of height; inset = space-16 (64px); gap = space-6 (24px); no radius — the band runs corner to corner
+    -->
+    <rect width="960" height="320" fill="var(--surface)" />
+
+    <defs>
+      <pattern id="dotgrid" width="16" height="16" patternUnits="userSpaceOnUse">
+        <circle cx="8" cy="8" r="1.5" fill="var(--surface)" />
+      </pattern>
+    </defs>
+
+    <rect x="0" y="0" width="420" height="106" fill="var(--brand)" />
+    <rect x="0" y="0" width="420" height="106" fill="url(#dotgrid)" />
+    <rect x="420" y="0" width="260" height="106" fill="var(--accent)" />
+    <rect x="680" y="0" width="160" height="106" fill="var(--ink-muted)" />
+    <rect x="840" y="0" width="120" height="106" fill="var(--accent-aws)" />
+
+    <text x="64" y="182" font-family="var(--font-sans)" font-size="64" font-weight="600" letter-spacing="-0.01em" fill="var(--ink)">Cloud Portfolio</text>
+    <text x="64" y="243" font-family="var(--font-sans)" font-size="64" font-weight="600" letter-spacing="-0.01em" fill="var(--ink)">System</text>
+    <text x="64" y="275" font-family="var(--font-mono)" font-size="14" letter-spacing="0.02em" fill="var(--ink-muted)">Tokens, components and writing rules for an AWS engineer's portfolio</text>
+  </svg>
+</div>
